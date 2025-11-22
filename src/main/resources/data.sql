@@ -90,7 +90,7 @@ INSERT INTO club_tag_map (club_id, tag_id) VALUES (1, 4);  -- 프로젝트
 
 -- CUT (club_id = 2)
 INSERT INTO club_tag_map (club_id, tag_id) VALUES (2, 5);  -- 탁구
-INSERT INTO club_tag_map (club  _id, tag_id) VALUES (2, 6);  -- 운동
+INSERT INTO club_tag_map (club_id, tag_id) VALUES (2, 6);  -- 운동
 
 -- K-오케스트라 (club_id = 3)
 INSERT INTO club_tag_map (club_id, tag_id) VALUES (3, 7);  -- 음악
