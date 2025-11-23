@@ -1,13 +1,17 @@
 CREATE TABLE club_category
 (
-    id   INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL
+    id         INT AUTO_INCREMENT PRIMARY KEY,
+    name       VARCHAR(255)                        NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL
 );
 
 CREATE TABLE club_tag
 (
-    id   INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(50) NOT NULL UNIQUE
+    id         INT AUTO_INCREMENT PRIMARY KEY,
+    name       VARCHAR(50)                         NOT NULL UNIQUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL
 );
 
 CREATE TABLE club
@@ -25,8 +29,10 @@ CREATE TABLE club
 
 CREATE TABLE club_tag_map
 (
-    club_id INT NOT NULL,
-    tag_id  INT NOT NULL,
+    club_id    INT                                 NOT NULL,
+    tag_id     INT                                 NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
 
     PRIMARY KEY (club_id, tag_id),
 
