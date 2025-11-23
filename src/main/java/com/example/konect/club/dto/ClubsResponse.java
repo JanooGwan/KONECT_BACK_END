@@ -1,6 +1,5 @@
 package com.example.konect.club.dto;
 
-import static com.fasterxml.jackson.databind.PropertyNamingStrategies.SnakeCaseStrategy;
 import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED;
 
 import java.util.List;
@@ -10,11 +9,9 @@ import org.springframework.data.domain.Page;
 
 import com.example.konect.club.model.Club;
 import com.example.konect.club.model.ClubTag;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
-@JsonNaming(value = SnakeCaseStrategy.class)
 public record ClubsResponse(
     @Schema(description = "조건에 해당하는 동아리 수", example = "10", requiredMode = REQUIRED)
     Long totalCount,
@@ -31,7 +28,6 @@ public record ClubsResponse(
     @Schema(description = "동아리 리스트", requiredMode = REQUIRED)
     List<InnerClubResponse> clubs
 ) {
-    @JsonNaming(value = SnakeCaseStrategy.class)
     public record InnerClubResponse(
         @Schema(description = "동아리 고유 ID", example = "1", requiredMode = REQUIRED)
         Integer id,
