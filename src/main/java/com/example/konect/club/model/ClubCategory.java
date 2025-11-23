@@ -3,6 +3,8 @@ package com.example.konect.club.model;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
 
+import com.example.konect.common.model.BaseEntity;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -16,7 +18,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "club_category")
 @NoArgsConstructor(access = PROTECTED)
-public class ClubCategory {
+public class ClubCategory extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)

@@ -4,6 +4,8 @@ import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
 
+import com.example.konect.common.model.BaseEntity;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -11,22 +13,15 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import java.time.LocalDateTime;
-
-import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 
 @Getter
 @Entity
 @Table(name = "club")
 @NoArgsConstructor(access = PROTECTED)
-public class Club {
+public class Club extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -45,16 +40,6 @@ public class Club {
 
     @Column(name = "image_url", length = 255, nullable = false)
     private String imageUrl;
-
-    @NotNull
-    @CreatedDate
-    @Column(name = "created_at", columnDefinition = "TIMESTAMP", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @NotNull
-    @LastModifiedDate
-    @Column(name = "updated_at", columnDefinition = "TIMESTAMP", nullable = false, updatable = true)
-    private LocalDateTime updatedAt;
 
     @Builder
     private Club(Integer id, ClubCategory clubCategory, String name, String description, String imageUrl) {

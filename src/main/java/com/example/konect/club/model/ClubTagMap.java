@@ -3,6 +3,8 @@ package com.example.konect.club.model;
 import static jakarta.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;
 
+import com.example.konect.common.model.BaseEntity;
+
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -17,7 +19,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "club_tag_map")
 @NoArgsConstructor(access = PROTECTED)
-public class ClubTagMap {
+public class ClubTagMap extends BaseEntity {
 
     @EmbeddedId
     private ClubTagMapId id;
