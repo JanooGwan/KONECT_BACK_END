@@ -30,7 +30,7 @@ public class ClubService {
     public ClubsResponse getClubs(Integer page, Integer limit, String query) {
         PageRequest pageable = PageRequest.of(page - 1, limit);
         Page<Club> clubPage = StringUtils.hasText(query) ?
-            clubRepository.findByQuery(query.trim(), pageable) : clubRepository.findAll(pageable);
+            clubRepository.findAllByQuery(query.trim(), pageable) : clubRepository.findAll(pageable);
 
         List<Integer> clubIds = clubPage.getContent().stream()
             .map(Club::getId)

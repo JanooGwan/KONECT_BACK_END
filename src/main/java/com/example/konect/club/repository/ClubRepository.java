@@ -22,5 +22,5 @@ public interface ClubRepository extends Repository<Club, Integer> {
         WHERE LOWER(c.name) LIKE LOWER(CONCAT('%', :query, '%'))
         OR LOWER(ct.name) LIKE LOWER(CONCAT('%', :query, '%'))
         """)
-    Page<Club> findByQuery(@Param("query") String query, Pageable pageable);
+    Page<Club> findAllByQuery(@Param("query") String query, Pageable pageable);
 }
