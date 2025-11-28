@@ -38,7 +38,11 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
 
     // swagger
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.14'
+
+    // notification
+    implementation 'com.github.maricn:logback-slack-appender:1.4.0'
+    implementation 'net.logstash.logback:logstash-logback-encoder:8.0'
 
     // test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
