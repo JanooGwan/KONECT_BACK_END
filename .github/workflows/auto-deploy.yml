@@ -19,7 +19,7 @@ jobs:
           host: ${{ secrets.SERVER_IP }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
-          port: 23422
+          port: ${{ secrets.SERVER_PORT }}
           script: |
             cd ${{ secrets.WORK_DIR }}
             ./deploy.sh
