@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import gg.agit.konect.club.dto.ClubDetailResponse;
 import gg.agit.konect.club.dto.ClubsResponse;
+import gg.agit.konect.club.dto.JoinedClubsResponse;
 import gg.agit.konect.club.service.ClubService;
 
 import lombok.RequiredArgsConstructor;
@@ -36,6 +37,13 @@ public class ClubController implements ClubApi {
         @PathVariable(name = "clubId") Integer clubId
     ) {
         ClubDetailResponse response = clubService.getClubDetail(clubId);
+        return ResponseEntity.ok(response);
+    }
+
+    // TODO. 인증 개발이 진행되면 파라미터 수정해야 함
+    @GetMapping("/joined")
+    public ResponseEntity<JoinedClubsResponse> getJoinedClubs() {
+        JoinedClubsResponse response = clubService.getJoinedClubs();
         return ResponseEntity.ok(response);
     }
 }
