@@ -23,15 +23,21 @@ public enum ApiResponseCode {
     INVALID_OPERATING_HOURS_TIME(HttpStatus.BAD_REQUEST, "운영일에는 시작 시간과 마감 시간이 필수이며, 시작 시간이 마감 시간보다 빨라야 합니다."),
     METHOD_NOT_ALLOWED(HttpStatus.METHOD_NOT_ALLOWED, "지원하지 않는 HTTP 메소드 입니다."),
 
+    // 401 Unauthorized
+    INVALID_SESSION(HttpStatus.UNAUTHORIZED, "올바르지 않은 인증 정보 입니다."),
+
     // 404 Not Found (리소스를 찾을 수 없음)
     NO_HANDLER_FOUND(HttpStatus.NOT_FOUND, "유효하지 않은 API 경로입니다."),
     NOT_FOUND_CLUB(HttpStatus.NOT_FOUND, "동아리를 찾을 수 업습니다."),
     NOT_FOUND_CLUB_MEMBER(HttpStatus.NOT_FOUND, "해당하는 동아리 원을 찾을 수 없습니다."),
     NOT_FOUND_COUNCIL(HttpStatus.NOT_FOUND, "총동아리연합회를 찾을 수 없습니다."),
     NOT_FOUND_COUNCIL_NOTICE(HttpStatus.NOT_FOUND, "총동아리연합회 공지사항을 찾을 수 없습니다."),
+    NOT_FOUND_USER(HttpStatus.NOT_FOUND, "유저를 찾을 수 없습니다."),
+    NOT_FOUND_UNREGISTERED_USER(HttpStatus.NOT_FOUND, "임시 유저를 찾을 수 없습니다."),
 
     // 409 CONFLICT (중복 혹은 충돌)
     OPTIMISTIC_LOCKING_FAILURE(HttpStatus.CONFLICT, "이미 처리된 요청입니다."),
+    ALREADY_REGISTERED_USER(HttpStatus.CONFLICT, "이미 가입된 회원입니다."),
 
     // 500 Internal Server Error (서버 오류)
     CLIENT_ABORTED(HttpStatus.INTERNAL_SERVER_ERROR, "클라이언트에 의해 연결이 중단되었습니다."),
