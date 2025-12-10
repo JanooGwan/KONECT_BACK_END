@@ -53,6 +53,14 @@ public class Council extends BaseEntity {
     @Column(name = "email", nullable = false)
     private String email;
 
+    @NotNull
+    @Column(name = "instagram_url", nullable = false)
+    private String instagramUrl;
+
+    @NotNull
+    @Column(name = "operating_hour", nullable = false)
+    private String operatingHour;
+
     @OneToOne(fetch = LAZY)
     @JoinColumn(name = "university_id", nullable = false)
     private University university;
@@ -66,6 +74,8 @@ public class Council extends BaseEntity {
         String personalColor,
         String phoneNumber,
         String email,
+        String instagramUrl,
+        String operatingHour,
         University university
     ) {
         this.id = id;
@@ -75,6 +85,8 @@ public class Council extends BaseEntity {
         this.personalColor = personalColor;
         this.phoneNumber = phoneNumber;
         this.email = email;
+        this.instagramUrl = instagramUrl;
+        this.operatingHour = operatingHour;
         this.university = university;
     }
 
