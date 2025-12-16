@@ -46,6 +46,7 @@ public class UserService {
             .studentNumber(request.studentNumber())
             .provider(tempUser.getProvider())
             .isMarketingAgreement(request.isMarketingAgreement())
+            .imageUrl("https://stage-static.koreatech.in/konect/User_02.png")
             .build();
 
         User savedUser = userRepository.save(newUser);
