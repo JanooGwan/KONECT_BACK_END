@@ -59,10 +59,53 @@ CREATE TABLE club
     introduce     TEXT                                NOT NULL,
     image_url     VARCHAR(255)                        NOT NULL,
     location      VARCHAR(255)                        NOT NULL,
+    fee_amount    INT,
+    fee_bank      VARCHAR(100),
+    fee_account_number VARCHAR(100),
+    fee_account_holder VARCHAR(100),
     created_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
 
     FOREIGN KEY (university_id) REFERENCES university (id)
+);
+
+CREATE TABLE club_survey_question
+(
+    id          INT AUTO_INCREMENT PRIMARY KEY,
+    club_id     INT                                 NOT NULL,
+    question    VARCHAR(255)                        NOT NULL,
+    is_required BOOLEAN                             NOT NULL,
+    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
+
+    FOREIGN KEY (club_id) REFERENCES club (id) ON DELETE CASCADE
+);
+
+CREATE TABLE club_apply
+(
+    id         INT AUTO_INCREMENT PRIMARY KEY,
+    club_id    INT                                 NOT NULL,
+    user_id    INT                                 NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
+
+    UNIQUE (club_id, user_id),
+
+    FOREIGN KEY (club_id) REFERENCES club (id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+);
+
+CREATE TABLE club_apply_answer
+(
+    id             INT AUTO_INCREMENT PRIMARY KEY,
+    apply_id       INT                                 NOT NULL,
+    question_id    INT                                 NOT NULL,
+    answer         TEXT                                NOT NULL,
+    created_at     TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at     TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
+
+    FOREIGN KEY (apply_id) REFERENCES club_apply (id) ON DELETE CASCADE,
+    FOREIGN KEY (question_id) REFERENCES club_survey_question (id) ON DELETE CASCADE
 );
 
 CREATE TABLE club_tag_map
