@@ -292,8 +292,8 @@ VALUES ('user01@example.com', 1, '홍길동', '010-1000-0001', '20250001', 'GOOG
        ('user19@example.com', 1, '권민재', '010-1000-0019', '20250019', 'GOOGLE', TRUE, 'https://stage-static.koreatech.in/konect/User_02.png'),
        ('user20@example.com', 1, '임소연', '010-1000-0020', '20250020', 'GOOGLE', TRUE, 'https://stage-static.koreatech.in/konect/User_02.png'),
        ('konecttest12@gmail.com', 1, '테스트', '010-1000-0021', '20250120', 'GOOGLE', TRUE, 'https://stage-static.koreatech.in/konect/User_02.png'),
-       ('ff1451@gmail.com', 1, '이준영', '010-1000-0020', '20250020', 'GOOGLE', TRUE, 'https://stage-static.koreatech.in/konect/User_02.png'),
-       ('dhun2906@gmail.com', 1, '이동훈', '010-1000-0020', '20250020', 'GOOGLE', TRUE, 'https://stage-static.koreatech.in/konect/User_02.png'),
+       ('ff1451@gmail.com', 1, '이준영', '010-1000-0022', '20250030', 'GOOGLE', TRUE, 'https://stage-static.koreatech.in/konect/User_02.png'),
+       ('dhun2906@gmail.com', 1, '이동훈', '010-1000-0023', '20250040', 'GOOGLE', TRUE, 'https://stage-static.koreatech.in/konect/User_02.png');
 
 
 -- 동아리
