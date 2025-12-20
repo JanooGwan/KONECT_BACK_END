@@ -56,6 +56,18 @@ public class Club extends BaseEntity {
     @Column(name = "location", length = 255, nullable = false)
     private String location;
 
+    @Column(name = "fee_amount")
+    private Integer feeAmount;
+
+    @Column(name = "fee_bank", length = 100)
+    private String feeBank;
+
+    @Column(name = "fee_account_number", length = 100)
+    private String feeAccountNumber;
+
+    @Column(name = "fee_account_holder", length = 100)
+    private String feeAccountHolder;
+
     @Builder
     private Club(
         Integer id,
@@ -65,7 +77,11 @@ public class Club extends BaseEntity {
         String description,
         String introduce,
         String imageUrl,
-        String location
+        String location,
+        Integer feeAmount,
+        String feeBank,
+        String feeAccountNumber,
+        String feeAccountHolder
     ) {
         this.id = id;
         this.clubCategory = clubCategory;
@@ -75,5 +91,9 @@ public class Club extends BaseEntity {
         this.introduce = introduce;
         this.imageUrl = imageUrl;
         this.location = location;
+        this.feeAmount = feeAmount;
+        this.feeBank = feeBank;
+        this.feeAccountNumber = feeAccountNumber;
+        this.feeAccountHolder = feeAccountHolder;
     }
 }
