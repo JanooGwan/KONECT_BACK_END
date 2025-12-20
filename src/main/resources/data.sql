@@ -344,9 +344,21 @@ VALUES ('ACADEMIC', 1, 'BCSD', '즐겁게 일하고 열심히 노는 IT 특성�
         '학생회관 111호'),
        ('PERFORMANCE', 1, '한소리', '한기대 유일무이 풍물패 입니다!',
         '한소리는 풍물 연주와 전통 문화 체험을 함께 즐기는 동아리입니다.',
-        'https://static.koreatech.in/upload/CLUB/2025/10/13/c23361f0-f7ff-4eee-ae9c-7577d5bab4da/1000006554.jpg',
-        '학생회관 112호');
+       'https://static.koreatech.in/upload/CLUB/2025/10/13/c23361f0-f7ff-4eee-ae9c-7577d5bab4da/1000006554.jpg',
+       '학생회관 112호');
 
+-- 동아리 회비 정보
+UPDATE club
+SET fee_amount = 10000,
+    fee_bank = '국민은행',
+    fee_account_number = '123-456-7890',
+    fee_account_holder = 'BCSD'
+WHERE id = 1;
+
+-- 동아리 설문 질문
+INSERT INTO club_survey_question (club_id, question, is_required)
+VALUES (1, '지원 동기를 입력해주세요.', TRUE),
+       (1, '동아리에서 기대하는 점을 적어주세요.', FALSE);
 -- 태그
 INSERT INTO club_tag (name)
 VALUES ('IT'),
