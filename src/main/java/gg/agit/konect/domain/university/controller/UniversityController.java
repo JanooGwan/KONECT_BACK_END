@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import gg.agit.konect.domain.university.dto.UniversitiesResponse;
 import gg.agit.konect.domain.university.service.UniversityService;
-
+import gg.agit.konect.global.auth.annotation.PublicApi;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -18,6 +18,7 @@ public class UniversityController implements UniversityApi {
     private final UniversityService universityService;
 
     @GetMapping
+    @PublicApi
     public ResponseEntity<UniversitiesResponse> getUniversities() {
         UniversitiesResponse response = universityService.getUniversities();
         return ResponseEntity.ok(response);
