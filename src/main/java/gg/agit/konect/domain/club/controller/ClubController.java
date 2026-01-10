@@ -16,6 +16,7 @@ import gg.agit.konect.domain.club.dto.ClubDetailResponse;
 import gg.agit.konect.domain.club.dto.ClubFeeInfoResponse;
 import gg.agit.konect.domain.club.dto.ClubMembersResponse;
 import gg.agit.konect.domain.club.dto.ClubMembershipsResponse;
+import gg.agit.konect.domain.club.dto.ClubRecruitmentCreateRequest;
 import gg.agit.konect.domain.club.dto.ClubRecruitmentResponse;
 import gg.agit.konect.domain.club.dto.ClubsResponse;
 import gg.agit.konect.domain.club.service.ClubService;
@@ -108,5 +109,15 @@ public class ClubController implements ClubApi {
     ) {
         ClubRecruitmentResponse response = clubService.getRecruitment(clubId, userId);
         return ResponseEntity.ok(response);
+    }
+
+    @Override
+    public ResponseEntity<Void> createRecruitment(
+        @RequestBody @Valid ClubRecruitmentCreateRequest request,
+        @PathVariable(name = "clubId") Integer clubId,
+        @UserId Integer userId
+    ) {
+        clubService.createRecruitment(clubId, userId, request);
+        return ResponseEntity.ok().build();
     }
 }

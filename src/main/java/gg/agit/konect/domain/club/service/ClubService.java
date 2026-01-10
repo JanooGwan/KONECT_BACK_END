@@ -14,14 +14,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import gg.agit.konect.domain.club.dto.ClubApplyQuestionsResponse;
 import gg.agit.konect.domain.club.dto.ClubApplyQuestionsReplaceRequest;
+import gg.agit.konect.domain.club.dto.ClubApplyQuestionsResponse;
 import gg.agit.konect.domain.club.dto.ClubApplyRequest;
 import gg.agit.konect.domain.club.dto.ClubCondition;
 import gg.agit.konect.domain.club.dto.ClubDetailResponse;
 import gg.agit.konect.domain.club.dto.ClubFeeInfoResponse;
 import gg.agit.konect.domain.club.dto.ClubMembersResponse;
 import gg.agit.konect.domain.club.dto.ClubMembershipsResponse;
+import gg.agit.konect.domain.club.dto.ClubRecruitmentCreateRequest;
 import gg.agit.konect.domain.club.dto.ClubRecruitmentResponse;
 import gg.agit.konect.domain.club.dto.ClubsResponse;
 import gg.agit.konect.domain.club.model.Club;
@@ -32,6 +33,7 @@ import gg.agit.konect.domain.club.model.ClubApplyQuestionAnswers;
 import gg.agit.konect.domain.club.model.ClubMember;
 import gg.agit.konect.domain.club.model.ClubMembers;
 import gg.agit.konect.domain.club.model.ClubRecruitment;
+import gg.agit.konect.domain.club.model.ClubRecruitmentImage;
 import gg.agit.konect.domain.club.model.ClubSummaryInfo;
 import gg.agit.konect.domain.club.repository.ClubApplyAnswerRepository;
 import gg.agit.konect.domain.club.repository.ClubApplyQuestionRepository;
@@ -243,4 +245,43 @@ public class ClubService {
         }
     }
 
+    @Transactional
+    public void createRecruitment(Integer clubId, Integer userId, ClubRecruitmentCreateRequest request) {
+        Club club = clubRepository.getById(clubId);
+        User user = userRepository.getById(userId);
+
+        ClubMember clubMember = clubMemberRepository.findByClubIdAndUserId(club.getId(), user.getId())
+            .orElseThrow(() -> CustomException.of(FORBIDDEN_CLUB_RECRUITMENT_CREATE));
+
+        validateClubManager(clubMember);
+
+        if (clubRecruitmentRepository.existsByClubId(clubId)) {
+            throw CustomException.of(ALREADY_EXIST_CLUB_RECRUITMENT);
+        }
+
+        ClubRecruitment clubRecruitment = ClubRecruitment.of(
+            request.startDate(),
+            request.endDate(),
+            request.isAlwaysRecruiting(),
+            request.content(),
+            club
+        );
+        List<String> imageUrls = request.getImageUrls();
+        for (int index = 0; index < imageUrls.size(); index++) {
+            ClubRecruitmentImage clubRecruitmentImage = ClubRecruitmentImage.of(
+                imageUrls.get(index),
+                index,
+                clubRecruitment
+            );
+            clubRecruitment.addImage(clubRecruitmentImage);
+        }
+
+        clubRecruitmentRepository.save(clubRecruitment);
+    }
+
+    private void validateClubManager(ClubMember clubMember) {
+        if (!clubMember.isPresident()) {
+            throw CustomException.of(FORBIDDEN_CLUB_RECRUITMENT_CREATE);
+        }
+    }
 }

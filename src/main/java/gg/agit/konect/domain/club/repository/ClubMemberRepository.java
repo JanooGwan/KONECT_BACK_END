@@ -56,6 +56,15 @@ public interface ClubMemberRepository extends Repository<ClubMember, ClubMemberI
         @Param("positionGroups") Set<ClubPositionGroup> positionGroups
     );
 
+    @Query("""
+        SELECT cm
+        FROM ClubMember cm
+        JOIN FETCH cm.clubPosition
+        WHERE cm.club.id = :clubId
+        AND cm.user.id = :userId
+        """)
+    Optional<ClubMember> findByClubIdAndUserId(@Param("clubId") Integer clubId, @Param("userId") Integer userId);
+
     boolean existsByClubIdAndUserId(Integer clubId, Integer userId);
 
     List<ClubMember> findByUserId(Integer userId);
