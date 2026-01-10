@@ -56,6 +56,14 @@ public class ClubController implements ClubApi {
     }
 
     @Override
+    public ResponseEntity<ClubMembershipsResponse> getManagedClubs(
+        @UserId Integer userId
+    ) {
+        ClubMembershipsResponse response = clubService.getManagedClubs(userId);
+        return ResponseEntity.ok(response);
+    }
+
+    @Override
     public ResponseEntity<ClubMembersResponse> getClubMembers(
         @PathVariable(name = "clubId") Integer clubId,
         @UserId Integer userId

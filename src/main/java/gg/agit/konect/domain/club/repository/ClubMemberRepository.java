@@ -43,6 +43,19 @@ public interface ClubMemberRepository extends Repository<ClubMember, ClubMemberI
     Optional<ClubMember> findPresidentByClubId(@Param("clubId") Integer clubId);
 
     @Query("""
+        SELECT cm
+        FROM ClubMember cm
+        JOIN FETCH cm.user
+        JOIN FETCH cm.clubPosition cp
+        WHERE cm.user.id = :userId
+        AND cp.clubPositionGroup = :clubPositionGroup
+        """)
+    List<ClubMember> findAllByUserIdAndClubPosition(
+        @Param("userId") Integer userId,
+        @Param("clubPositionGroup") ClubPositionGroup clubPositionGroup
+    );
+
+    @Query("""
         SELECT COUNT(cm) > 0
         FROM ClubMember cm
         JOIN cm.clubPosition cp
