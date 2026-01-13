@@ -134,6 +134,22 @@ public class Club extends BaseEntity {
         updateFeeInfo(feeAmount, feeBank, feeAccountNumber, feeAccountHolder, feeDeadline);
     }
 
+    public void updateProfile(
+        String name,
+        String description,
+        String introduce,
+        String imageUrl,
+        String location,
+        ClubCategory clubCategory
+    ) {
+        this.name = name;
+        this.description = description;
+        this.introduce = introduce;
+        this.imageUrl = imageUrl;
+        this.location = location;
+        this.clubCategory = clubCategory;
+    }
+
     private boolean isFeeInfoEmpty(
         Integer feeAmount,
         String feeBank,

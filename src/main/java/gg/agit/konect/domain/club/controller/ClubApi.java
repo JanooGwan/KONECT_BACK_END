@@ -14,7 +14,9 @@ import gg.agit.konect.domain.club.dto.ClubApplyQuestionsReplaceRequest;
 import gg.agit.konect.domain.club.dto.ClubApplyQuestionsResponse;
 import gg.agit.konect.domain.club.dto.ClubApplyRequest;
 import gg.agit.konect.domain.club.dto.ClubCondition;
+import gg.agit.konect.domain.club.dto.ClubDetailCreateRequest;
 import gg.agit.konect.domain.club.dto.ClubDetailResponse;
+import gg.agit.konect.domain.club.dto.ClubDetailUpdateRequest;
 import gg.agit.konect.domain.club.dto.ClubFeeInfoReplaceRequest;
 import gg.agit.konect.domain.club.dto.ClubFeeInfoResponse;
 import gg.agit.konect.domain.club.dto.ClubMembersResponse;
@@ -53,6 +55,33 @@ public interface ClubApi {
         @UserId Integer userId
     );
 
+    @Operation(summary = "새로운 동아리를 생성한다.", description = """
+        새로운 동아리를 생성하고, 생성한 사용자를 회장으로 등록합니다.
+                
+        ## 에러
+        - NOT_FOUND_USER (404): 유저를 찾을 수 없습니다.
+        """)
+    @PostMapping
+    ResponseEntity<ClubDetailResponse> createDetail(
+        @Valid @RequestBody ClubDetailCreateRequest request,
+        @UserId Integer userId
+    );
+
+    @Operation(summary = "동아리 상세 정보를 수정한다.", description = """
+        동아리 회장 또는 매니저만 동아리 정보를 수정할 수 있습니다.
+                
+        ## 에러
+        - FORBIDDEN_CLUB_MANAGER_ACCESS (403): 동아리 매니저 권한이 없습니다.
+        - NOT_FOUND_CLUB (404): 동아리를 찾을 수 없습니다.
+        - NOT_FOUND_USER (404): 유저를 찾을 수 없습니다.
+        """)
+    @PutMapping("/{clubId}")
+    ResponseEntity<ClubDetailResponse> updateDetail(
+        @PathVariable(name = "clubId") Integer clubId,
+        @Valid @RequestBody ClubDetailUpdateRequest request,
+        @UserId Integer userId
+    );
+
     @Operation(summary = "가입한 동아리 리스트를 조회한다.")
     @GetMapping("/joined")
     ResponseEntity<ClubMembershipsResponse> getJoinedClubs(
@@ -75,7 +104,7 @@ public interface ClubApi {
     @Operation(summary = "동아리 가입 신청을 한다.", description = """
         동아리 가입 신청서를 제출합니다.
         설문 질문이 없는 경우 answers는 빈 배열을 전달합니다.
-        
+                
         - ALREADY_APPLIED_CLUB (409): 이미 가입 신청을 완료한 사용자입니다.
         - NOT_FOUND_CLUB_APPLY_QUESTION (404): 존재하지 않는 가입 문항입니다.
         - DUPLICATE_CLUB_APPLY_QUESTION (409): 중복된 id의 가입 문항이 포함되어 있습니다.
@@ -130,7 +159,7 @@ public interface ClubApi {
         - questionId가 없으면 생성
         - 요청에 없는 기존 문항은 삭제됩니다.
         - 저장된 문항 목록을 반환합니다.
-        
+                
         ## 에러
         - FORBIDDEN_CLUB_MANAGER_ACCESS (403): 동아리 매니저 권한이 없습니다.
         - NOT_FOUND_CLUB_APPLY_QUESTION (404): 존재하지 않는 가입 문항입니다.
@@ -145,10 +174,10 @@ public interface ClubApi {
 
     @Operation(summary = "동아리 모집 정보를 조회한다.", description = """
         동아리의 모집 공고 상세 정보를 조회합니다.
-        
+                
         - status는 모집 기간에 따라 BEFORE(모집 전), ONGOING(모집 중), CLOSED(모집 마감)으로 반환됩니다.
         - 동아리 멤버이거나 지원 이력이 존재할 경우 isApplied는 true로 반환됩니다.
-        
+                
         ## 에러
         - NOT_FOUND_CLUB (404): 동아리를 찾을 수 없습니다.
         - NOT_FOUND_USER (404): 유저를 찾을 수 없습니다.
@@ -163,7 +192,7 @@ public interface ClubApi {
     @Operation(summary = "동아리 모집 정보를 생성한다.", description = """
         동아리 회장만 모집 공고를 생성할 수 있습니다.
         한 동아리당 하나의 모집 공고만 생성 가능합니다.
-        
+                
         ## 에러
         - INVALID_RECRUITMENT_DATE_NOT_ALLOWED (400): 상시 모집인 경우 모집 시작일과 마감일을 지정할 수 없습니다.
         - INVALID_RECRUITMENT_DATE_REQUIRED (400): 상시 모집이 아닐 경우 모집 시작일과 마감일이 필수입니다.
