@@ -149,24 +149,6 @@ public class ClubService {
         return getClubDetail(clubId, userId);
     }
 
-    @Transactional
-    public ClubDetailResponse changePresident(Integer clubId, Integer userId, Integer newPresidentUserId) {
-        userRepository.getById(userId);
-        Club club = clubRepository.getById(clubId);
-        User newPresident = userRepository.getById(newPresidentUserId);
-
-        if (!hasClubManageAccess(clubId, userId, PRESIDENT_ALLOWED_GROUPS)) {
-            throw CustomException.of(FORBIDDEN_CLUB_MANAGER_ACCESS);
-        }
-
-        boolean isNewPresidentMember = clubMemberRepository.existsByClubIdAndUserId(clubId, newPresidentUserId);
-        if (!isNewPresidentMember) {
-            throw CustomException.of(NOT_FOUND_CLUB_MEMBER);
-        }
-
-        return getClubDetail(clubId, userId);
-    }
-
     public ClubMembershipsResponse getJoinedClubs(Integer userId) {
         List<ClubMember> clubMembers = clubMemberRepository.findAllByUserId(userId);
         return ClubMembershipsResponse.from(clubMembers);
