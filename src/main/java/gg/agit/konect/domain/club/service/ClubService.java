@@ -1,9 +1,6 @@
 package gg.agit.konect.domain.club.service;
 
-import static gg.agit.konect.domain.club.enums.ClubPositionGroup.MANAGER;
-import static gg.agit.konect.domain.club.enums.ClubPositionGroup.MEMBER;
-import static gg.agit.konect.domain.club.enums.ClubPositionGroup.PRESIDENT;
-import static gg.agit.konect.domain.club.enums.ClubPositionGroup.VICE_PRESIDENT;
+import static gg.agit.konect.domain.club.enums.ClubPositionGroup.*;
 import static gg.agit.konect.global.code.ApiResponseCode.*;
 
 import java.time.LocalDateTime;
@@ -117,14 +114,32 @@ public class ClubService {
 
         Club savedClub = clubRepository.save(club);
 
-        ClubPosition presidentPosition = ClubPosition.builder()
-            .name("회장")
-            .clubPositionGroup(PRESIDENT)
-            .club(savedClub)
-            .build();
+        List<ClubPosition> defaultPositions = List.of(
+            ClubPosition.builder()
+                .name("회장")
+                .clubPositionGroup(PRESIDENT)
+                .club(savedClub)
+                .build(),
+            ClubPosition.builder()
+                .name("부회장")
+                .clubPositionGroup(VICE_PRESIDENT)
+                .club(savedClub)
+                .build(),
+            ClubPosition.builder()
+                .name("운영진")
+                .clubPositionGroup(MANAGER)
+                .club(savedClub)
+                .build(),
+            ClubPosition.builder()
+                .name("일반회원")
+                .clubPositionGroup(MEMBER)
+                .club(savedClub)
+                .build()
+        );
 
-        clubPositionRepository.save(presidentPosition);
+        defaultPositions.forEach(clubPositionRepository::save);
 
+        ClubPosition presidentPosition = defaultPositions.get(0);
         ClubMember president = ClubMember.builder()
             .club(savedClub)
             .user(user)
@@ -474,51 +489,6 @@ public class ClubService {
             );
             clubRecruitment.addImage(newImage);
         }
-    }
-
-    @Transactional
-    public ClubDetailResponse createClub(Integer userId, ClubCreateRequest request) {
-        User user = userRepository.getById(userId);
-        Club club = request.toEntity(user.getUniversity());
-
-        Club savedClub = clubRepository.save(club);
-
-        List<ClubPosition> defaultPositions = List.of(
-            ClubPosition.builder()
-                .name("회장")
-                .clubPositionGroup(PRESIDENT)
-                .club(savedClub)
-                .build(),
-            ClubPosition.builder()
-                .name("부회장")
-                .clubPositionGroup(VICE_PRESIDENT)
-                .club(savedClub)
-                .build(),
-            ClubPosition.builder()
-                .name("운영진")
-                .clubPositionGroup(MANAGER)
-                .club(savedClub)
-                .build(),
-            ClubPosition.builder()
-                .name("일반회원")
-                .clubPositionGroup(MEMBER)
-                .club(savedClub)
-                .build()
-        );
-
-        defaultPositions.forEach(clubPositionRepository::save);
-
-        ClubPosition presidentPosition = defaultPositions.get(0);
-        ClubMember president = ClubMember.builder()
-            .club(savedClub)
-            .user(user)
-            .clubPosition(presidentPosition)
-            .isFeePaid(false)
-            .build();
-
-        clubMemberRepository.save(president);
-
-        return getClubDetail(savedClub.getId(), userId);
     }
 
     private boolean hasClubManageAccess(

@@ -63,4 +63,16 @@ public class ClubMember extends BaseEntity {
     public void updatePosition(ClubPosition clubPosition) {
         this.clubPosition = clubPosition;
     }
+
+    public void changePosition(ClubPosition clubPosition) {
+        this.clubPosition = clubPosition;
+    }
+
+    public ClubPositionGroup getPositionGroup() {
+        return this.clubPosition.getClubPositionGroup();
+    }
+
+    public boolean canManage(ClubMember target) {
+        return this.getPositionGroup().canManage(target.getPositionGroup());
+    }
 }

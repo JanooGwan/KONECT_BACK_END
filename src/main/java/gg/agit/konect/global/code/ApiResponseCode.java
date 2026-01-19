@@ -64,7 +64,6 @@ public enum ApiResponseCode {
     NOT_FOUND_UNREGISTERED_USER(HttpStatus.NOT_FOUND, "임시 유저를 찾을 수 없습니다."),
     UNIVERSITY_NOT_FOUND(HttpStatus.NOT_FOUND, "대학교를 찾을 수 없습니다."),
     NOT_FOUND_CLUB_APPLY_QUESTION(HttpStatus.NOT_FOUND, "동아리 가입 문항을 찾을 수 없습니다."),
-    NOT_FOUND_CLUB_POSITION(HttpStatus.NOT_FOUND, "동아리 직책을 찾을 수 없습니다."),
     NOT_FOUND_RANKING_TYPE(HttpStatus.NOT_FOUND, "순위 타입을 찾을 수 없습니다."),
     NOT_FOUND_BANK(HttpStatus.NOT_FOUND, "해당하는 은행을 찾을 수 없습니다."),
 
@@ -85,8 +84,7 @@ public enum ApiResponseCode {
 
     // 500 Internal Server Error (서버 오류)
     CLIENT_ABORTED(HttpStatus.INTERNAL_SERVER_ERROR, "클라이언트에 의해 연결이 중단되었습니다."),
-    UNEXPECTED_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버에 예기치 못한 에러가 발생했습니다.")
-    ;
+    UNEXPECTED_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버에 예기치 못한 에러가 발생했습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;

@@ -20,7 +20,14 @@ public interface ClubMemberRepository extends Repository<ClubMember, ClubMemberI
         JOIN FETCH cm.user
         JOIN FETCH cm.clubPosition cp
         WHERE cm.club.id = :clubId
-        ORDER BY cp.clubPositionGroup ASC, cp.name ASC
+        ORDER BY 
+            CASE cp.clubPositionGroup
+                WHEN gg.agit.konect.domain.club.enums.ClubPositionGroup.PRESIDENT THEN 0
+                WHEN gg.agit.konect.domain.club.enums.ClubPositionGroup.VICE_PRESIDENT THEN 1
+                WHEN gg.agit.konect.domain.club.enums.ClubPositionGroup.MANAGER THEN 2
+                WHEN gg.agit.konect.domain.club.enums.ClubPositionGroup.MEMBER THEN 3
+            END ASC,
+            cp.name ASC
         """)
     List<ClubMember> findAllByClubId(@Param("clubId") Integer clubId);
 
