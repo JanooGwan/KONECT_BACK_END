@@ -38,6 +38,7 @@ import gg.agit.konect.domain.club.dto.ClubMembershipsResponse;
 import gg.agit.konect.domain.club.dto.ClubRecruitmentCreateRequest;
 import gg.agit.konect.domain.club.dto.ClubRecruitmentResponse;
 import gg.agit.konect.domain.club.dto.ClubRecruitmentUpdateRequest;
+import gg.agit.konect.domain.club.dto.ClubUpdateRequest;
 import gg.agit.konect.domain.club.dto.ClubsResponse;
 import gg.agit.konect.domain.club.enums.ClubPositionGroup;
 import gg.agit.konect.domain.club.model.Club;
@@ -107,6 +108,54 @@ public class ClubService {
         Boolean isApplied = isMember || clubApplyRepository.existsByClubIdAndUserId(clubId, userId);
 
         return ClubDetailResponse.of(club, memberCount, recruitment, clubPresidents, isMember, isApplied);
+    }
+
+    @Transactional
+    public ClubDetailResponse createClub(Integer userId, ClubCreateRequest request) {
+        User user = userRepository.getById(userId);
+        Club club = request.toEntity(user.getUniversity());
+
+        Club savedClub = clubRepository.save(club);
+
+        ClubPosition presidentPosition = ClubPosition.builder()
+            .name("회장")
+            .clubPositionGroup(PRESIDENT)
+            .club(savedClub)
+            .build();
+
+        clubPositionRepository.save(presidentPosition);
+
+        ClubMember president = ClubMember.builder()
+            .club(savedClub)
+            .user(user)
+            .clubPosition(presidentPosition)
+            .isFeePaid(false)
+            .build();
+
+        clubMemberRepository.save(president);
+
+        return getClubDetail(savedClub.getId(), userId);
+    }
+
+    @Transactional
+    public ClubDetailResponse updateClub(Integer clubId, Integer userId, ClubUpdateRequest request) {
+        userRepository.getById(userId);
+        Club club = clubRepository.getById(clubId);
+
+        if (!hasClubManageAccess(clubId, userId, MANAGER_ALLOWED_GROUPS)) {
+            throw CustomException.of(FORBIDDEN_CLUB_MANAGER_ACCESS);
+        }
+
+        club.update(
+            request.name(),
+            request.description(),
+            request.imageUrl(),
+            request.location(),
+            request.clubCategory(),
+            request.introduce()
+        );
+
+        return getClubDetail(clubId, userId);
     }
 
     public ClubMembershipsResponse getJoinedClubs(Integer userId) {

@@ -60,27 +60,7 @@ public class ClubMember extends BaseEntity {
         return this.user.getId().equals(userId);
     }
 
-    public ClubPositionGroup getPositionGroup() {
-        return clubPosition.getClubPositionGroup();
-    }
-
-    public void changePosition(ClubPosition newPosition) {
-        this.clubPosition = newPosition;
-    }
-
-    public boolean canManage(ClubMember target) {
-        return this.getPositionGroup().canManage(target.getPositionGroup());
-    }
-
-    public boolean isVicePresident() {
-        return clubPosition.isVicePresident();
-    }
-
-    public boolean isManager() {
-        return clubPosition.isManager();
-    }
-
-    public boolean isMember() {
-        return clubPosition.isMember();
+    public void updatePosition(ClubPosition clubPosition) {
+        this.clubPosition = clubPosition;
     }
 }
