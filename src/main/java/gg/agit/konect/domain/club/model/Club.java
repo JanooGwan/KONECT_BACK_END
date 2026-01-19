@@ -11,6 +11,7 @@ import java.time.LocalDate;
 
 import org.springframework.util.StringUtils;
 
+import gg.agit.konect.domain.club.dto.ClubCreateRequest;
 import gg.agit.konect.domain.club.enums.ClubCategory;
 import gg.agit.konect.domain.university.model.University;
 import gg.agit.konect.global.exception.CustomException;
@@ -115,6 +116,18 @@ public class Club extends BaseEntity {
         this.clubRecruitment = clubRecruitment;
     }
 
+    public static Club of(ClubCreateRequest request, University university) {
+        return Club.builder()
+            .name(request.name())
+            .description(request.description())
+            .introduce(request.introduce())
+            .imageUrl(request.imageUrl())
+            .location(request.location())
+            .clubCategory(request.clubCategory())
+            .university(university)
+            .build();
+    }
+
     public void replaceFeeInfo(
         Integer feeAmount,
         String feeBank,
@@ -132,6 +145,22 @@ public class Club extends BaseEntity {
         }
 
         updateFeeInfo(feeAmount, feeBank, feeAccountNumber, feeAccountHolder, feeDeadline);
+    }
+
+    public void update(
+        String name,
+        String description,
+        String imageUrl,
+        String location,
+        ClubCategory clubCategory,
+        String introduce
+    ) {
+        this.name = name;
+        this.description = description;
+        this.imageUrl = imageUrl;
+        this.location = location;
+        this.clubCategory = clubCategory;
+        this.introduce = introduce;
     }
 
     private boolean isFeeInfoEmpty(
