@@ -132,6 +132,7 @@ public interface ClubMemberRepository extends Repository<ClubMember, ClubMemberI
     );
 
     void delete(ClubMember clubMember);
+    ClubMember save(ClubMember clubMember);
 
     void deleteByUserId(Integer userId);
 
