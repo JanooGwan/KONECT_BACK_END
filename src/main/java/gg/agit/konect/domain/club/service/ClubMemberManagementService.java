@@ -12,13 +12,13 @@ import gg.agit.konect.domain.club.dto.MemberPositionChangeRequest;
 import gg.agit.konect.domain.club.dto.PresidentTransferRequest;
 import gg.agit.konect.domain.club.dto.VicePresidentChangeRequest;
 import gg.agit.konect.domain.club.enums.ClubPositionGroup;
-import gg.agit.konect.domain.club.model.Club;
 import gg.agit.konect.domain.club.model.ClubMember;
 import gg.agit.konect.domain.club.model.ClubPosition;
 import gg.agit.konect.domain.club.repository.ClubMemberRepository;
 import gg.agit.konect.domain.club.repository.ClubPositionRepository;
 import gg.agit.konect.domain.club.repository.ClubRepository;
 import gg.agit.konect.domain.user.repository.UserRepository;
+import gg.agit.konect.global.code.ApiResponseCode;
 import gg.agit.konect.global.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 
@@ -40,22 +40,14 @@ public class ClubMemberManagementService {
         Integer requesterId,
         MemberPositionChangeRequest request
     ) {
-        Club club = clubRepository.getById(clubId);
+        clubRepository.getById(clubId);
 
-        if (targetUserId.equals(requesterId)) {
-            throw CustomException.of(CANNOT_CHANGE_OWN_POSITION);
-        }
+        validateNotSelf(requesterId, targetUserId, CANNOT_CHANGE_OWN_POSITION);
 
-        ClubMember requester = clubMemberRepository.findByClubIdAndUserId(clubId, requesterId)
-            .orElseThrow(() -> CustomException.of(NOT_FOUND_CLUB_MEMBER));
+        ClubMember requester = clubMemberRepository.getByClubIdAndUserId(clubId, requesterId);
+        validateManagerPermission(requester);
 
-        ClubPositionGroup requesterGroup = requester.getPositionGroup();
-        if (requesterGroup != PRESIDENT && requesterGroup != VICE_PRESIDENT) {
-            throw CustomException.of(FORBIDDEN_MEMBER_POSITION_CHANGE);
-        }
-
-        ClubMember target = clubMemberRepository.findByClubIdAndUserId(clubId, targetUserId)
-            .orElseThrow(() -> CustomException.of(NOT_FOUND_CLUB_MEMBER));
+        ClubMember target = clubMemberRepository.getByClubIdAndUserId(clubId, targetUserId);
 
         if (!requester.canManage(target)) {
             throw CustomException.of(CANNOT_MANAGE_HIGHER_POSITION);
@@ -75,14 +67,14 @@ public class ClubMemberManagementService {
 
         if (newPositionGroup == VICE_PRESIDENT) {
             long vicePresidentCount = clubMemberRepository.countByClubIdAndPositionGroup(clubId, VICE_PRESIDENT);
-            if (vicePresidentCount >= 1) {
+            if (target.getPositionGroup() != VICE_PRESIDENT && vicePresidentCount >= 1) {
                 throw CustomException.of(VICE_PRESIDENT_ALREADY_EXISTS);
             }
         }
 
         if (newPositionGroup == MANAGER) {
             long managerCount = clubMemberRepository.countByClubIdAndPositionGroup(clubId, MANAGER);
-            if (managerCount >= MAX_MANAGER_COUNT) {
+            if (target.getPositionGroup() != MANAGER && managerCount >= MAX_MANAGER_COUNT) {
                 throw CustomException.of(MANAGER_LIMIT_EXCEEDED);
             }
         }
@@ -96,30 +88,18 @@ public class ClubMemberManagementService {
         Integer currentPresidentId,
         PresidentTransferRequest request
     ) {
-        Club club = clubRepository.getById(clubId);
+        clubRepository.getById(clubId);
 
-        ClubMember currentPresident = clubMemberRepository.findByClubIdAndUserId(clubId, currentPresidentId)
-            .orElseThrow(() -> CustomException.of(NOT_FOUND_CLUB_PRESIDENT));
-
-        if (!currentPresident.isPresident()) {
-            throw CustomException.of(FORBIDDEN_CLUB_MANAGER_ACCESS);
-        }
+        ClubMember currentPresident = clubMemberRepository.getByClubIdAndUserId(clubId, currentPresidentId);
+        validatePresidentPermission(currentPresident);
 
         Integer newPresidentUserId = request.newPresidentUserId();
+        validateNotSelf(currentPresidentId, newPresidentUserId, ILLEGAL_ARGUMENT);
 
-        if (currentPresidentId.equals(newPresidentUserId)) {
-            throw CustomException.of(ILLEGAL_ARGUMENT);
-        }
+        ClubMember newPresident = clubMemberRepository.getByClubIdAndUserId(clubId, newPresidentUserId);
 
-        ClubMember newPresident = clubMemberRepository.findByClubIdAndUserId(clubId, newPresidentUserId)
-            .orElseThrow(() -> CustomException.of(NOT_FOUND_CLUB_MEMBER));
-
-        ClubPosition presidentPosition = clubPositionRepository.findFirstByClubIdAndPositionGroup(clubId, PRESIDENT)
-            .orElseThrow(() -> CustomException.of(NOT_FOUND_CLUB_POSITION));
-
-        ClubPosition memberPosition = clubPositionRepository.findFirstByClubIdAndPositionGroup(clubId,
-                ClubPositionGroup.MEMBER)
-            .orElseThrow(() -> CustomException.of(NOT_FOUND_CLUB_POSITION));
+        ClubPosition presidentPosition = clubPositionRepository.getFirstByClubIdAndClubPositionGroup(clubId, PRESIDENT);
+        ClubPosition memberPosition = clubPositionRepository.getFirstByClubIdAndClubPositionGroup(clubId, MEMBER);
 
         currentPresident.changePosition(memberPosition);
         newPresident.changePosition(presidentPosition);
@@ -131,18 +111,15 @@ public class ClubMemberManagementService {
         Integer requesterId,
         VicePresidentChangeRequest request
     ) {
-        Club club = clubRepository.getById(clubId);
+        clubRepository.getById(clubId);
 
-        ClubMember requester = clubMemberRepository.findByClubIdAndUserId(clubId, requesterId)
-            .orElseThrow(() -> CustomException.of(NOT_FOUND_CLUB_MEMBER));
+        ClubMember requester = clubMemberRepository.getByClubIdAndUserId(clubId, requesterId);
+        validatePresidentPermission(requester);
 
-        if (!requester.isPresident()) {
-            throw CustomException.of(FORBIDDEN_CLUB_MANAGER_ACCESS);
-        }
-
-        ClubPosition vicePresidentPosition = clubPositionRepository.findFirstByClubIdAndPositionGroup(clubId,
-                VICE_PRESIDENT)
-            .orElseThrow(() -> CustomException.of(NOT_FOUND_CLUB_POSITION));
+        ClubPosition vicePresidentPosition = clubPositionRepository.getFirstByClubIdAndClubPositionGroup(
+            clubId,
+            VICE_PRESIDENT
+        );
 
         Optional<ClubMember> currentVicePresidentOpt = clubMemberRepository.findAllByClubIdAndPositionGroup(clubId,
                 VICE_PRESIDENT)
@@ -154,27 +131,22 @@ public class ClubMemberManagementService {
         if (newVicePresidentUserId == null) {
             if (currentVicePresidentOpt.isPresent()) {
                 ClubMember currentVicePresident = currentVicePresidentOpt.get();
-                ClubPosition memberPosition = clubPositionRepository.findFirstByClubIdAndPositionGroup(clubId,
-                        ClubPositionGroup.MEMBER)
-                    .orElseThrow(() -> CustomException.of(NOT_FOUND_CLUB_POSITION));
+                ClubPosition memberPosition = clubPositionRepository.getFirstByClubIdAndClubPositionGroup(clubId,
+                    MEMBER);
                 currentVicePresident.changePosition(memberPosition);
             }
             return;
         }
 
-        if (requesterId.equals(newVicePresidentUserId)) {
-            throw CustomException.of(CANNOT_CHANGE_OWN_POSITION);
-        }
+        validateNotSelf(requesterId, newVicePresidentUserId, CANNOT_CHANGE_OWN_POSITION);
 
-        ClubMember newVicePresident = clubMemberRepository.findByClubIdAndUserId(clubId, newVicePresidentUserId)
-            .orElseThrow(() -> CustomException.of(NOT_FOUND_CLUB_MEMBER));
+        ClubMember newVicePresident = clubMemberRepository.getByClubIdAndUserId(clubId, newVicePresidentUserId);
 
         if (currentVicePresidentOpt.isPresent()) {
             ClubMember currentVicePresident = currentVicePresidentOpt.get();
             if (!currentVicePresident.getId().getUserId().equals(newVicePresidentUserId)) {
-                ClubPosition memberPosition = clubPositionRepository.findFirstByClubIdAndPositionGroup(clubId,
-                        ClubPositionGroup.MEMBER)
-                    .orElseThrow(() -> CustomException.of(NOT_FOUND_CLUB_POSITION));
+                ClubPosition memberPosition = clubPositionRepository.getFirstByClubIdAndClubPositionGroup(clubId,
+                    MEMBER);
                 currentVicePresident.changePosition(memberPosition);
             }
         }
@@ -184,17 +156,14 @@ public class ClubMemberManagementService {
 
     @Transactional
     public void removeMember(Integer clubId, Integer targetUserId, Integer requesterId) {
-        Club club = clubRepository.getById(clubId);
+        clubRepository.getById(clubId);
 
-        if (targetUserId.equals(requesterId)) {
-            throw CustomException.of(CANNOT_REMOVE_SELF);
-        }
+        validateNotSelf(requesterId, targetUserId, CANNOT_REMOVE_SELF);
 
-        ClubMember requester = clubMemberRepository.findByClubIdAndUserId(clubId, requesterId)
-            .orElseThrow(() -> CustomException.of(NOT_FOUND_CLUB_MEMBER));
+        ClubMember requester = clubMemberRepository.getByClubIdAndUserId(clubId, requesterId);
+        validateManagerPermission(requester);
 
-        ClubMember target = clubMemberRepository.findByClubIdAndUserId(clubId, targetUserId)
-            .orElseThrow(() -> CustomException.of(NOT_FOUND_CLUB_MEMBER));
+        ClubMember target = clubMemberRepository.getByClubIdAndUserId(clubId, targetUserId);
 
         if (target.isPresident()) {
             throw CustomException.of(CANNOT_DELETE_CLUB_PRESIDENT);
@@ -209,5 +178,24 @@ public class ClubMemberManagementService {
         }
 
         clubMemberRepository.delete(target);
+    }
+
+    private void validateNotSelf(Integer userId1, Integer userId2, ApiResponseCode errorCode) {
+        if (userId1.equals(userId2)) {
+            throw CustomException.of(errorCode);
+        }
+    }
+
+    private void validatePresidentPermission(ClubMember member) {
+        if (!member.isPresident()) {
+            throw CustomException.of(FORBIDDEN_CLUB_MANAGER_ACCESS);
+        }
+    }
+
+    private void validateManagerPermission(ClubMember member) {
+        ClubPositionGroup positionGroup = member.getPositionGroup();
+        if (positionGroup != PRESIDENT && positionGroup != VICE_PRESIDENT) {
+            throw CustomException.of(FORBIDDEN_MEMBER_POSITION_CHANGE);
+        }
     }
 }

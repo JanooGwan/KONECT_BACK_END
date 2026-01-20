@@ -45,7 +45,12 @@ public interface ClubPositionRepository extends Repository<ClubPosition, Integer
 
     boolean existsByClubIdAndNameAndIdNot(Integer clubId, String name, Integer id);
 
-    long countByClubIdAndPositionGroup(Integer clubId, ClubPositionGroup positionGroup);
+    long countByClubIdAndClubPositionGroup(Integer clubId, ClubPositionGroup positionGroup);
 
-    Optional<ClubPosition> findFirstByClubIdAndPositionGroup(Integer clubId, ClubPositionGroup positionGroup);
+    Optional<ClubPosition> findFirstByClubIdAndClubPositionGroup(Integer clubId, ClubPositionGroup positionGroup);
+
+    default ClubPosition getFirstByClubIdAndClubPositionGroup(Integer clubId, ClubPositionGroup positionGroup) {
+        return findFirstByClubIdAndClubPositionGroup(clubId, positionGroup)
+            .orElseThrow(() -> CustomException.of(NOT_FOUND_CLUB_POSITION));
+    }
 }

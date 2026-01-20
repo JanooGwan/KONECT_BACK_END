@@ -132,7 +132,7 @@ public class ClubPositionService {
         }
 
         ClubPositionGroup positionGroup = position.getClubPositionGroup();
-        long sameGroupCount = clubPositionRepository.countByClubIdAndPositionGroup(clubId, positionGroup);
+        long sameGroupCount = clubPositionRepository.countByClubIdAndClubPositionGroup(clubId, positionGroup);
         if (sameGroupCount < 2) {
             throw CustomException.of(INSUFFICIENT_POSITION_COUNT);
         }

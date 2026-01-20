@@ -11,6 +11,8 @@ import org.springframework.data.repository.query.Param;
 import gg.agit.konect.domain.club.enums.ClubPositionGroup;
 import gg.agit.konect.domain.club.model.ClubMember;
 import gg.agit.konect.domain.club.model.ClubMemberId;
+import gg.agit.konect.global.code.ApiResponseCode;
+import gg.agit.konect.global.exception.CustomException;
 
 public interface ClubMemberRepository extends Repository<ClubMember, ClubMemberId> {
 
@@ -99,6 +101,11 @@ public interface ClubMemberRepository extends Repository<ClubMember, ClubMemberI
         AND cm.user.id = :userId
         """)
     Optional<ClubMember> findByClubIdAndUserId(@Param("clubId") Integer clubId, @Param("userId") Integer userId);
+
+    default ClubMember getByClubIdAndUserId(Integer clubId, Integer userId) {
+        return findByClubIdAndUserId(clubId, userId)
+            .orElseThrow(() -> CustomException.of(ApiResponseCode.NOT_FOUND_CLUB_MEMBER));
+    }
 
     boolean existsByClubIdAndUserId(Integer clubId, Integer userId);
 
