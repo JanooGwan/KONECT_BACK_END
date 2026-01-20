@@ -49,6 +49,11 @@ public class ClubMemberManagementService {
         ClubMember requester = clubMemberRepository.findByClubIdAndUserId(clubId, requesterId)
             .orElseThrow(() -> CustomException.of(NOT_FOUND_CLUB_MEMBER));
 
+        ClubPositionGroup requesterGroup = requester.getPositionGroup();
+        if (requesterGroup != PRESIDENT && requesterGroup != VICE_PRESIDENT) {
+            throw CustomException.of(FORBIDDEN_MEMBER_POSITION_CHANGE);
+        }
+
         ClubMember target = clubMemberRepository.findByClubIdAndUserId(clubId, targetUserId)
             .orElseThrow(() -> CustomException.of(NOT_FOUND_CLUB_MEMBER));
 
@@ -197,6 +202,10 @@ public class ClubMemberManagementService {
 
         if (!requester.canManage(target)) {
             throw CustomException.of(CANNOT_MANAGE_HIGHER_POSITION);
+        }
+
+        if (target.getPositionGroup() != MEMBER) {
+            throw CustomException.of(CANNOT_REMOVE_NON_MEMBER);
         }
 
         clubMemberRepository.delete(target);

@@ -1,7 +1,7 @@
 package gg.agit.konect.domain.club.service;
 
-import static gg.agit.konect.domain.club.enums.ClubPositionGroup.MANAGER;
 import static gg.agit.konect.domain.club.enums.ClubPositionGroup.PRESIDENT;
+import static gg.agit.konect.domain.club.enums.ClubPositionGroup.VICE_PRESIDENT;
 import static gg.agit.konect.global.code.ApiResponseCode.*;
 
 import java.util.EnumSet;
@@ -29,7 +29,7 @@ import lombok.RequiredArgsConstructor;
 public class ClubPositionService {
 
     private static final Set<ClubPositionGroup> MANAGER_ALLOWED_GROUPS =
-        EnumSet.of(PRESIDENT, MANAGER);
+        EnumSet.of(PRESIDENT, VICE_PRESIDENT);
 
     private final ClubRepository clubRepository;
     private final ClubPositionRepository clubPositionRepository;

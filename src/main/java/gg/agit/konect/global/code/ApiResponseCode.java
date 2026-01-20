@@ -26,6 +26,7 @@ public enum ApiResponseCode {
     CANNOT_DELETE_ESSENTIAL_POSITION(HttpStatus.BAD_REQUEST, "필수 직책은 삭제할 수 없습니다."),
     CANNOT_MANAGE_HIGHER_POSITION(HttpStatus.BAD_REQUEST, "자신보다 높은 직급의 회원은 관리할 수 없습니다."),
     CANNOT_REMOVE_SELF(HttpStatus.BAD_REQUEST, "자기 자신을 강제 탈퇴시킬 수 없습니다."),
+    CANNOT_REMOVE_NON_MEMBER(HttpStatus.BAD_REQUEST, "일반회원만 강제 탈퇴할 수 있습니다. 먼저 직책을 변경한 후 탈퇴시켜주세요."),
     INSUFFICIENT_POSITION_COUNT(HttpStatus.BAD_REQUEST, "해당 그룹에 최소 2개의 직책이 있어야 삭제 가능합니다."),
     MANAGER_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "운영진은 최대 20명까지 임명 가능합니다."),
     POSITION_IN_USE(HttpStatus.BAD_REQUEST, "해당 직책을 사용 중인 회원이 있어 삭제할 수 없습니다."),
