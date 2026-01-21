@@ -80,7 +80,7 @@ public interface ClubApi {
     );
 
     @Operation(summary = "동아리 정보를 수정한다.", description = """
-        동아리 회장 또는 매니저만 동아리 정보를 수정할 수 있습니다.
+        동아리 회장 또는 부회장만 동아리 정보를 수정할 수 있습니다.
         수정 가능 항목: 동아리명, 한 줄 소개, 로고 이미지, 위치, 분과, 상세 소개
 
         ## 에러
@@ -261,7 +261,7 @@ public interface ClubApi {
     );
 
     @Operation(summary = "동아리 모집 정보를 수정한다.", description = """
-        동아리 회장 또는 매니저만 모집 공고를 수정할 수 있습니다.
+        동아리 회장 또는 부회장만 모집 공고를 수정할 수 있습니다.
         
         ## 에러
         - INVALID_RECRUITMENT_DATE_NOT_ALLOWED (400): 상시 모집인 경우 모집 시작일과 마감일을 지정할 수 없습니다.
@@ -293,7 +293,7 @@ public interface ClubApi {
     );
 
     @Operation(summary = "동아리 직책을 생성한다.", description = """
-        동아리 회장 또는 매니저만 직책을 생성할 수 있습니다.
+        동아리 회장 또는 부회장만 직책을 생성할 수 있습니다.
         PRESIDENT와 VICE_PRESIDENT 직책은 생성할 수 없으며, MANAGER 또는 MEMBER 그룹의 직책만 생성 가능합니다.
 
         ## 에러
@@ -309,7 +309,7 @@ public interface ClubApi {
     );
 
     @Operation(summary = "동아리 직책의 이름을 수정한다.", description = """
-        동아리 회장 또는 매니저만 직책 이름을 수정할 수 있습니다.
+        동아리 회장 또는 부회장만 직책 이름을 수정할 수 있습니다.
         PRESIDENT와 VICE_PRESIDENT 직책의 이름은 변경할 수 없습니다.
 
         ## 에러
@@ -328,7 +328,7 @@ public interface ClubApi {
     );
 
     @Operation(summary = "동아리 직책을 삭제한다.", description = """
-        동아리 회장 또는 매니저만 직책을 삭제할 수 있습니다.
+        동아리 회장 또는 부회장만 직책을 삭제할 수 있습니다.
         PRESIDENT와 VICE_PRESIDENT 직책은 삭제할 수 없습니다.
         해당 직책을 사용 중인 회원이 없어야 하며, 해당 그룹에 최소 2개의 직책이 있어야 삭제 가능합니다.
 
@@ -348,7 +348,7 @@ public interface ClubApi {
     );
 
     @Operation(summary = "동아리 회원의 직책을 변경한다.", description = """
-        동아리 회장 또는 매니저만 회원의 직책을 변경할 수 있습니다.
+        동아리 회장 또는 부회장만 회원의 직책을 변경할 수 있습니다.
         자기 자신의 직책은 변경할 수 없으며, 상위 직급만 하위 직급의 회원을 관리할 수 있습니다.
 
         ## 에러
