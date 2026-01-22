@@ -17,6 +17,4 @@ public interface ClubTagMapRepository extends Repository<ClubTagMap, ClubTagMapI
     void deleteByClubId(Integer clubId);
 
     ClubTagMap save(ClubTagMap clubTagMap);
-
-    void saveAll(List<ClubTagMap> clubTagMaps);
 }

@@ -168,14 +168,13 @@ public class ClubService {
             throw CustomException.of(NOT_FOUND_CLUB);
         }
 
-        List<ClubTagMap> tagMaps = tags.stream()
-            .map(tag -> ClubTagMap.builder()
+        tags.forEach(tag -> {
+            ClubTagMap tagMap = ClubTagMap.builder()
                 .club(club)
                 .tag(tag)
-                .build())
-            .toList();
-
-        clubTagMapRepository.saveAll(tagMaps);
+                .build();
+            clubTagMapRepository.save(tagMap);
+        });
     }
 
     @Transactional
