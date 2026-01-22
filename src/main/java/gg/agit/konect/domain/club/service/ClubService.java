@@ -1,6 +1,7 @@
 package gg.agit.konect.domain.club.service;
 
-import static gg.agit.konect.domain.club.enums.ClubPositionGroup.*;
+import static gg.agit.konect.domain.club.enums.ClubPositionGroup.MANAGER;
+import static gg.agit.konect.domain.club.enums.ClubPositionGroup.PRESIDENT;
 import static gg.agit.konect.global.code.ApiResponseCode.*;
 
 import java.time.LocalDateTime;
@@ -99,14 +100,14 @@ public class ClubService {
         Club club = clubRepository.getById(clubId);
         ClubMembers clubMembers = ClubMembers.from(clubMemberRepository.findAllByClubId(club.getId()));
 
-        List<ClubMember> clubPresidents = clubMembers.getPresidents();
+        ClubMember president = clubMembers.getPresident();
         Integer memberCount = clubMembers.getCount();
         ClubRecruitment recruitment = club.getClubRecruitment();
 
         boolean isMember = clubMembers.contains(userId);
         Boolean isApplied = isMember || clubApplyRepository.existsByClubIdAndUserId(clubId, userId);
 
-        return ClubDetailResponse.of(club, memberCount, recruitment, clubPresidents, isMember, isApplied);
+        return ClubDetailResponse.of(club, memberCount, recruitment, president, isMember, isApplied);
     }
 
     @Transactional
@@ -376,6 +377,7 @@ public class ClubService {
                 questionRequest.isRequired())
             );
         }
+
         return questionsToCreate;
     }
 
