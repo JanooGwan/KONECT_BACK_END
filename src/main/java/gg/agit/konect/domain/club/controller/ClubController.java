@@ -14,9 +14,11 @@ import gg.agit.konect.domain.club.dto.ClubApplicationsResponse;
 import gg.agit.konect.domain.club.dto.ClubApplyQuestionsReplaceRequest;
 import gg.agit.konect.domain.club.dto.ClubApplyQuestionsResponse;
 import gg.agit.konect.domain.club.dto.ClubApplyRequest;
+import gg.agit.konect.domain.club.dto.ClubBasicInfoUpdateRequest;
 import gg.agit.konect.domain.club.dto.ClubCondition;
 import gg.agit.konect.domain.club.dto.ClubCreateRequest;
 import gg.agit.konect.domain.club.dto.ClubDetailResponse;
+import gg.agit.konect.domain.club.dto.ClubDetailUpdateRequest;
 import gg.agit.konect.domain.club.dto.ClubFeeInfoReplaceRequest;
 import gg.agit.konect.domain.club.dto.ClubFeeInfoResponse;
 import gg.agit.konect.domain.club.dto.ClubMemberAddRequest;
@@ -26,10 +28,11 @@ import gg.agit.konect.domain.club.dto.ClubMembershipsResponse;
 import gg.agit.konect.domain.club.dto.ClubPositionCreateRequest;
 import gg.agit.konect.domain.club.dto.ClubPositionUpdateRequest;
 import gg.agit.konect.domain.club.dto.ClubPositionsResponse;
+import gg.agit.konect.domain.club.dto.ClubProfileUpdateRequest;
 import gg.agit.konect.domain.club.dto.ClubRecruitmentCreateRequest;
 import gg.agit.konect.domain.club.dto.ClubRecruitmentResponse;
 import gg.agit.konect.domain.club.dto.ClubRecruitmentUpdateRequest;
-import gg.agit.konect.domain.club.dto.ClubUpdateRequest;
+import gg.agit.konect.domain.club.dto.ClubTagsResponse;
 import gg.agit.konect.domain.club.dto.ClubsResponse;
 import gg.agit.konect.domain.club.dto.MemberPositionChangeRequest;
 import gg.agit.konect.domain.club.dto.PresidentTransferRequest;
@@ -78,12 +81,38 @@ public class ClubController implements ClubApi {
     }
 
     @Override
-    public ResponseEntity<ClubDetailResponse> updateClub(
+    public ResponseEntity<Void> updateProfile(
         @PathVariable(name = "clubId") Integer clubId,
-        @Valid @RequestBody ClubUpdateRequest request,
+        @Valid @RequestBody ClubProfileUpdateRequest request,
         @UserId Integer userId
     ) {
-        ClubDetailResponse response = clubService.updateClub(clubId, userId, request);
+        clubService.updateProfile(clubId, userId, request);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Override
+    public ResponseEntity<Void> updateDetails(
+        @PathVariable(name = "clubId") Integer clubId,
+        @Valid @RequestBody ClubDetailUpdateRequest request,
+        @UserId Integer userId
+    ) {
+        clubService.updateDetails(clubId, userId, request);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Override
+    public ResponseEntity<Void> updateBasicInfo(
+        @PathVariable(name = "clubId") Integer clubId,
+        @Valid @RequestBody ClubBasicInfoUpdateRequest request,
+        @UserId Integer userId
+    ) {
+        clubService.updateBasicInfo(clubId, userId, request);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Override
+    public ResponseEntity<ClubTagsResponse> getTags() {
+        ClubTagsResponse response = clubService.getTags();
         return ResponseEntity.ok(response);
     }
 
