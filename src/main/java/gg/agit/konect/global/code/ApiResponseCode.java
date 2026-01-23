@@ -50,6 +50,7 @@ public enum ApiResponseCode {
     FORBIDDEN_COUNCIL_NOTICE_ACCESS(HttpStatus.FORBIDDEN, "총동아리연합회 공지사항 조회 권한이 없습니다."),
     FORBIDDEN_MEMBER_POSITION_CHANGE(HttpStatus.FORBIDDEN, "회원 직책 변경 권한이 없습니다."),
     FORBIDDEN_POSITION_NAME_CHANGE(HttpStatus.FORBIDDEN, "해당 직책의 이름은 변경할 수 없습니다."),
+    FORBIDDEN_ROLE_ACCESS(HttpStatus.FORBIDDEN, "접근 권한이 없습니다."),
 
     // 404 Not Found (리소스를 찾을 수 없음)
     NO_HANDLER_FOUND(HttpStatus.NOT_FOUND, "유효하지 않은 API 경로입니다."),
@@ -62,6 +63,7 @@ public enum ApiResponseCode {
     NOT_FOUND_COUNCIL(HttpStatus.NOT_FOUND, "총동아리연합회를 찾을 수 없습니다."),
     NOT_FOUND_COUNCIL_NOTICE(HttpStatus.NOT_FOUND, "총동아리연합회 공지사항을 찾을 수 없습니다."),
     NOT_FOUND_USER(HttpStatus.NOT_FOUND, "유저를 찾을 수 없습니다."),
+    NOT_FOUND_SCHEDULE(HttpStatus.NOT_FOUND, "일정을 찾을 수 없습니다."),
     NOT_FOUND_UNREGISTERED_USER(HttpStatus.NOT_FOUND, "임시 유저를 찾을 수 없습니다."),
     UNIVERSITY_NOT_FOUND(HttpStatus.NOT_FOUND, "대학교를 찾을 수 없습니다."),
     NOT_FOUND_CLUB_APPLY_QUESTION(HttpStatus.NOT_FOUND, "동아리 가입 문항을 찾을 수 없습니다."),
