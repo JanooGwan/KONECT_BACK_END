@@ -1,6 +1,7 @@
 package gg.agit.konect.domain.club.service;
 
-import static gg.agit.konect.domain.club.enums.ClubPositionGroup.*;
+import static gg.agit.konect.domain.club.enums.ClubPositionGroup.MANAGER;
+import static gg.agit.konect.domain.club.enums.ClubPositionGroup.PRESIDENT;
 import static gg.agit.konect.global.code.ApiResponseCode.*;
 
 import java.time.LocalDateTime;
@@ -21,8 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import gg.agit.konect.domain.bank.repository.BankRepository;
 import gg.agit.konect.domain.club.dto.ClubApplicationAnswersResponse;
-import gg.agit.konect.domain.club.dto.ClubAppliedClubsResponse;
 import gg.agit.konect.domain.club.dto.ClubApplicationsResponse;
+import gg.agit.konect.domain.club.dto.ClubAppliedClubsResponse;
 import gg.agit.konect.domain.club.dto.ClubApplyQuestionsReplaceRequest;
 import gg.agit.konect.domain.club.dto.ClubApplyQuestionsResponse;
 import gg.agit.konect.domain.club.dto.ClubApplyRequest;
@@ -34,9 +35,6 @@ import gg.agit.konect.domain.club.dto.ClubFeeInfoResponse;
 import gg.agit.konect.domain.club.dto.ClubMemberCondition;
 import gg.agit.konect.domain.club.dto.ClubMembersResponse;
 import gg.agit.konect.domain.club.dto.ClubMembershipsResponse;
-import gg.agit.konect.domain.club.dto.ClubRecruitmentCreateRequest;
-import gg.agit.konect.domain.club.dto.ClubRecruitmentResponse;
-import gg.agit.konect.domain.club.dto.ClubRecruitmentUpdateRequest;
 import gg.agit.konect.domain.club.dto.ClubUpdateRequest;
 import gg.agit.konect.domain.club.dto.ClubsResponse;
 import gg.agit.konect.domain.club.enums.ClubPositionGroup;
@@ -49,7 +47,6 @@ import gg.agit.konect.domain.club.model.ClubMember;
 import gg.agit.konect.domain.club.model.ClubMembers;
 import gg.agit.konect.domain.club.model.ClubPosition;
 import gg.agit.konect.domain.club.model.ClubRecruitment;
-import gg.agit.konect.domain.club.model.ClubRecruitmentImage;
 import gg.agit.konect.domain.club.model.ClubSummaryInfo;
 import gg.agit.konect.domain.club.repository.ClubApplyAnswerRepository;
 import gg.agit.konect.domain.club.repository.ClubApplyQuestionRepository;
@@ -325,16 +322,6 @@ public class ClubService {
         return ClubApplyQuestionsResponse.from(questions);
     }
 
-    public ClubRecruitmentResponse getRecruitment(Integer clubId, Integer userId) {
-        Club club = clubRepository.getById(clubId);
-        User user = userRepository.getById(userId);
-        ClubRecruitment recruitment = clubRecruitmentRepository.getByClubId(club.getId());
-        boolean isMember = clubMemberRepository.existsByClubIdAndUserId(clubId, userId);
-        boolean isApplied = isMember || clubApplyRepository.existsByClubIdAndUserId(club.getId(), user.getId());
-
-        return ClubRecruitmentResponse.of(recruitment, isApplied);
-    }
-
     @Transactional
     public ClubFeeInfoResponse applyClub(Integer clubId, Integer userId, ClubApplyRequest request) {
         Club club = clubRepository.getById(clubId);
@@ -418,68 +405,6 @@ public class ClubService {
 
         if (!questionsToDelete.isEmpty()) {
             clubApplyQuestionRepository.deleteAll(questionsToDelete);
-        }
-    }
-
-    @Transactional
-    public void createRecruitment(Integer clubId, Integer userId, ClubRecruitmentCreateRequest request) {
-        Club club = clubRepository.getById(clubId);
-        User user = userRepository.getById(userId);
-
-        if (!hasClubManageAccess(clubId, userId, PRESIDENT_ALLOWED_GROUPS)) {
-            throw CustomException.of(FORBIDDEN_CLUB_RECRUITMENT_CREATE);
-        }
-
-        if (clubRecruitmentRepository.existsByClubId(clubId)) {
-            throw CustomException.of(ALREADY_EXIST_CLUB_RECRUITMENT);
-        }
-
-        ClubRecruitment clubRecruitment = ClubRecruitment.of(
-            request.startDate(),
-            request.endDate(),
-            request.isAlwaysRecruiting(),
-            request.content(),
-            club
-        );
-        List<String> imageUrls = request.getImageUrls();
-        for (int index = 0; index < imageUrls.size(); index++) {
-            ClubRecruitmentImage clubRecruitmentImage = ClubRecruitmentImage.of(
-                imageUrls.get(index),
-                index,
-                clubRecruitment
-            );
-            clubRecruitment.addImage(clubRecruitmentImage);
-        }
-
-        clubRecruitmentRepository.save(clubRecruitment);
-    }
-
-    @Transactional
-    public void updateRecruitment(Integer clubId, Integer userId, ClubRecruitmentUpdateRequest request) {
-        clubRepository.getById(clubId);
-        userRepository.getById(userId);
-
-        if (!hasClubManageAccess(clubId, userId, MANAGER_ALLOWED_GROUPS)) {
-            throw CustomException.of(FORBIDDEN_CLUB_MANAGER_ACCESS);
-        }
-
-        ClubRecruitment clubRecruitment = clubRecruitmentRepository.getByClubId(clubId);
-        clubRecruitment.update(
-            request.startDate(),
-            request.endDate(),
-            request.isAlwaysRecruiting(),
-            request.content()
-        );
-
-        clubRecruitment.getImages().clear();
-        List<String> imageUrls = request.getImageUrls();
-        for (int index = 0; index < imageUrls.size(); index++) {
-            ClubRecruitmentImage newImage = ClubRecruitmentImage.of(
-                imageUrls.get(index),
-                index,
-                clubRecruitment
-            );
-            clubRecruitment.addImage(newImage);
         }
     }
 

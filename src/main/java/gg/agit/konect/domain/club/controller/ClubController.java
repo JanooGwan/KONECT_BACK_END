@@ -36,6 +36,7 @@ import gg.agit.konect.domain.club.dto.PresidentTransferRequest;
 import gg.agit.konect.domain.club.dto.VicePresidentChangeRequest;
 import gg.agit.konect.domain.club.service.ClubMemberManagementService;
 import gg.agit.konect.domain.club.service.ClubPositionService;
+import gg.agit.konect.domain.club.service.ClubRecruitmentService;
 import gg.agit.konect.domain.club.service.ClubService;
 import gg.agit.konect.global.auth.annotation.UserId;
 import jakarta.validation.Valid;
@@ -49,6 +50,7 @@ public class ClubController implements ClubApi {
     private final ClubService clubService;
     private final ClubPositionService clubPositionService;
     private final ClubMemberManagementService clubMemberManagementService;
+    private final ClubRecruitmentService clubRecruitmentService;
 
     @Override
     public ResponseEntity<ClubsResponse> getClubs(
@@ -196,7 +198,7 @@ public class ClubController implements ClubApi {
         @PathVariable(name = "clubId") Integer clubId,
         @UserId Integer userId
     ) {
-        ClubRecruitmentResponse response = clubService.getRecruitment(clubId, userId);
+        ClubRecruitmentResponse response = clubRecruitmentService.getRecruitment(clubId, userId);
         return ResponseEntity.ok(response);
     }
 
@@ -206,7 +208,7 @@ public class ClubController implements ClubApi {
         @PathVariable(name = "clubId") Integer clubId,
         @UserId Integer userId
     ) {
-        clubService.createRecruitment(clubId, userId, request);
+        clubRecruitmentService.createRecruitment(clubId, userId, request);
         return ResponseEntity.ok().build();
     }
 
@@ -216,7 +218,7 @@ public class ClubController implements ClubApi {
         @PathVariable(name = "clubId") Integer clubId,
         @UserId Integer userId
     ) {
-        clubService.updateRecruitment(clubId, userId, request);
+        clubRecruitmentService.updateRecruitment(clubId, userId, request);
         return ResponseEntity.noContent().build();
     }
 
