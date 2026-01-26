@@ -15,7 +15,7 @@ public interface ClubTagRepository extends Repository<ClubTag, Integer> {
 
     default ClubTag getById(Integer id) {
         return findById(id)
-            .orElseThrow(() -> CustomException.of(ApiResponseCode.NOT_FOUND_CLUB));
+            .orElseThrow(() -> CustomException.of(ApiResponseCode.NOT_FOUND_CLUB_TAG));
     }
 
     List<ClubTag> findAll();

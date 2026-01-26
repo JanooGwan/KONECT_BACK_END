@@ -22,8 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import gg.agit.konect.domain.bank.repository.BankRepository;
 import gg.agit.konect.domain.club.dto.ClubApplicationAnswersResponse;
-import gg.agit.konect.domain.club.dto.ClubAppliedClubsResponse;
 import gg.agit.konect.domain.club.dto.ClubApplicationsResponse;
+import gg.agit.konect.domain.club.dto.ClubAppliedClubsResponse;
 import gg.agit.konect.domain.club.dto.ClubApplyQuestionsReplaceRequest;
 import gg.agit.konect.domain.club.dto.ClubApplyQuestionsResponse;
 import gg.agit.konect.domain.club.dto.ClubApplyRequest;
@@ -165,7 +165,7 @@ public class ClubService {
 
         List<ClubTag> tags = clubTagRepository.findAllByIdIn(request.tagIds());
         if (tags.size() != request.tagIds().size()) {
-            throw CustomException.of(NOT_FOUND_CLUB);
+            throw CustomException.of(NOT_FOUND_CLUB_TAG);
         }
 
         tags.forEach(tag -> {
