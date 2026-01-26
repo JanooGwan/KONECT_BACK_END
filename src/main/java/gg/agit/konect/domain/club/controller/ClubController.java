@@ -34,6 +34,7 @@ import gg.agit.konect.domain.club.dto.ClubsResponse;
 import gg.agit.konect.domain.club.dto.MemberPositionChangeRequest;
 import gg.agit.konect.domain.club.dto.PresidentTransferRequest;
 import gg.agit.konect.domain.club.dto.VicePresidentChangeRequest;
+import gg.agit.konect.domain.club.service.ClubApplyService;
 import gg.agit.konect.domain.club.service.ClubMemberManagementService;
 import gg.agit.konect.domain.club.service.ClubPositionService;
 import gg.agit.konect.domain.club.service.ClubRecruitmentService;
@@ -51,6 +52,7 @@ public class ClubController implements ClubApi {
     private final ClubPositionService clubPositionService;
     private final ClubMemberManagementService clubMemberManagementService;
     private final ClubRecruitmentService clubRecruitmentService;
+    private final ClubApplyService clubApplyService;
 
     @Override
     public ResponseEntity<ClubsResponse> getClubs(
@@ -116,7 +118,7 @@ public class ClubController implements ClubApi {
         @PathVariable(name = "clubId") Integer clubId,
         @UserId Integer userId
     ) {
-        ClubApplicationsResponse response = clubService.getClubApplications(clubId, userId);
+        ClubApplicationsResponse response = clubApplyService.getClubApplications(clubId, userId);
         return ResponseEntity.ok(response);
     }
 
@@ -126,7 +128,7 @@ public class ClubController implements ClubApi {
         @PathVariable(name = "applicationId") Integer applicationId,
         @UserId Integer userId
     ) {
-        ClubApplicationAnswersResponse response = clubService.getClubApplicationAnswers(
+        ClubApplicationAnswersResponse response = clubApplyService.getClubApplicationAnswers(
             clubId,
             applicationId,
             userId
@@ -151,7 +153,7 @@ public class ClubController implements ClubApi {
         @Valid @RequestBody ClubApplyRequest request,
         @UserId Integer userId
     ) {
-        ClubFeeInfoResponse response = clubService.applyClub(clubId, userId, request);
+        ClubFeeInfoResponse response = clubApplyService.applyClub(clubId, userId, request);
         return ResponseEntity.ok(response);
     }
 
@@ -179,7 +181,7 @@ public class ClubController implements ClubApi {
         @PathVariable(name = "clubId") Integer clubId,
         @UserId Integer userId
     ) {
-        ClubApplyQuestionsResponse response = clubService.getApplyQuestions(clubId, userId);
+        ClubApplyQuestionsResponse response = clubApplyService.getApplyQuestions(clubId, userId);
         return ResponseEntity.ok(response);
     }
 
@@ -189,7 +191,7 @@ public class ClubController implements ClubApi {
         @Valid @RequestBody ClubApplyQuestionsReplaceRequest request,
         @UserId Integer userId
     ) {
-        ClubApplyQuestionsResponse response = clubService.replaceApplyQuestions(clubId, userId, request);
+        ClubApplyQuestionsResponse response = clubApplyService.replaceApplyQuestions(clubId, userId, request);
         return ResponseEntity.ok(response);
     }
 
