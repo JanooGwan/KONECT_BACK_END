@@ -147,20 +147,19 @@ public class Club extends BaseEntity {
         updateFeeInfo(feeAmount, feeBank, feeAccountNumber, feeAccountHolder, feeDeadline);
     }
 
-    public void update(
-        String name,
-        String description,
-        String imageUrl,
-        String location,
-        ClubCategory clubCategory,
-        String introduce
-    ) {
-        this.name = name;
-        this.description = description;
+    public void updateProfile(String introduce, String imageUrl) {
+        this.description = introduce;
         this.imageUrl = imageUrl;
+    }
+
+    public void updateDetails(String location, String introduce) {
         this.location = location;
-        this.clubCategory = clubCategory;
         this.introduce = introduce;
+    }
+
+    public void updateBasicInfo(String name, ClubCategory clubCategory) { // 어드민 계정으로만 사용 가능
+        this.name = name;
+        this.clubCategory = clubCategory;
     }
 
     private boolean isFeeInfoEmpty(

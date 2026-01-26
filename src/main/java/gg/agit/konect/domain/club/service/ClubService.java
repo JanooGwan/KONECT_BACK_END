@@ -1,6 +1,7 @@
 package gg.agit.konect.domain.club.service;
 
-import static gg.agit.konect.domain.club.enums.ClubPositionGroup.*;
+import static gg.agit.konect.domain.club.enums.ClubPositionGroup.MANAGER;
+import static gg.agit.konect.domain.club.enums.ClubPositionGroup.PRESIDENT;
 import static gg.agit.konect.global.code.ApiResponseCode.*;
 
 import java.time.LocalDateTime;
@@ -21,23 +22,26 @@ import org.springframework.transaction.annotation.Transactional;
 
 import gg.agit.konect.domain.bank.repository.BankRepository;
 import gg.agit.konect.domain.club.dto.ClubApplicationAnswersResponse;
-import gg.agit.konect.domain.club.dto.ClubAppliedClubsResponse;
 import gg.agit.konect.domain.club.dto.ClubApplicationsResponse;
+import gg.agit.konect.domain.club.dto.ClubAppliedClubsResponse;
 import gg.agit.konect.domain.club.dto.ClubApplyQuestionsReplaceRequest;
 import gg.agit.konect.domain.club.dto.ClubApplyQuestionsResponse;
 import gg.agit.konect.domain.club.dto.ClubApplyRequest;
+import gg.agit.konect.domain.club.dto.ClubBasicInfoUpdateRequest;
 import gg.agit.konect.domain.club.dto.ClubCondition;
 import gg.agit.konect.domain.club.dto.ClubCreateRequest;
 import gg.agit.konect.domain.club.dto.ClubDetailResponse;
+import gg.agit.konect.domain.club.dto.ClubDetailUpdateRequest;
 import gg.agit.konect.domain.club.dto.ClubFeeInfoReplaceRequest;
 import gg.agit.konect.domain.club.dto.ClubFeeInfoResponse;
 import gg.agit.konect.domain.club.dto.ClubMemberCondition;
 import gg.agit.konect.domain.club.dto.ClubMembersResponse;
 import gg.agit.konect.domain.club.dto.ClubMembershipsResponse;
+import gg.agit.konect.domain.club.dto.ClubProfileUpdateRequest;
 import gg.agit.konect.domain.club.dto.ClubRecruitmentCreateRequest;
 import gg.agit.konect.domain.club.dto.ClubRecruitmentResponse;
 import gg.agit.konect.domain.club.dto.ClubRecruitmentUpdateRequest;
-import gg.agit.konect.domain.club.dto.ClubUpdateRequest;
+import gg.agit.konect.domain.club.dto.ClubTagsResponse;
 import gg.agit.konect.domain.club.dto.ClubsResponse;
 import gg.agit.konect.domain.club.enums.ClubPositionGroup;
 import gg.agit.konect.domain.club.model.Club;
@@ -51,6 +55,8 @@ import gg.agit.konect.domain.club.model.ClubPosition;
 import gg.agit.konect.domain.club.model.ClubRecruitment;
 import gg.agit.konect.domain.club.model.ClubRecruitmentImage;
 import gg.agit.konect.domain.club.model.ClubSummaryInfo;
+import gg.agit.konect.domain.club.model.ClubTag;
+import gg.agit.konect.domain.club.model.ClubTagMap;
 import gg.agit.konect.domain.club.repository.ClubApplyAnswerRepository;
 import gg.agit.konect.domain.club.repository.ClubApplyQuestionRepository;
 import gg.agit.konect.domain.club.repository.ClubApplyRepository;
@@ -59,6 +65,8 @@ import gg.agit.konect.domain.club.repository.ClubPositionRepository;
 import gg.agit.konect.domain.club.repository.ClubQueryRepository;
 import gg.agit.konect.domain.club.repository.ClubRecruitmentRepository;
 import gg.agit.konect.domain.club.repository.ClubRepository;
+import gg.agit.konect.domain.club.repository.ClubTagMapRepository;
+import gg.agit.konect.domain.club.repository.ClubTagRepository;
 import gg.agit.konect.domain.user.model.User;
 import gg.agit.konect.domain.user.repository.UserRepository;
 import gg.agit.konect.global.exception.CustomException;
@@ -84,6 +92,8 @@ public class ClubService {
     private final ClubApplyAnswerRepository clubApplyAnswerRepository;
     private final UserRepository userRepository;
     private final BankRepository bankRepository;
+    private final ClubTagRepository clubTagRepository;
+    private final ClubTagMapRepository clubTagMapRepository;
 
     public ClubsResponse getClubs(ClubCondition condition, Integer userId) {
         User user = userRepository.getById(userId);
@@ -99,14 +109,15 @@ public class ClubService {
         Club club = clubRepository.getById(clubId);
         ClubMembers clubMembers = ClubMembers.from(clubMemberRepository.findAllByClubId(club.getId()));
 
-        List<ClubMember> clubPresidents = clubMembers.getPresidents();
+        ClubMember president = clubMembers.getPresident();
         Integer memberCount = clubMembers.getCount();
         ClubRecruitment recruitment = club.getClubRecruitment();
+        List<ClubTagMap> clubTagMaps = clubTagMapRepository.findAllByClubId(clubId);
 
         boolean isMember = clubMembers.contains(userId);
         Boolean isApplied = isMember || clubApplyRepository.existsByClubIdAndUserId(clubId, userId);
 
-        return ClubDetailResponse.of(club, memberCount, recruitment, clubPresidents, isMember, isApplied);
+        return ClubDetailResponse.of(club, memberCount, recruitment, president, clubTagMaps, isMember, isApplied);
     }
 
     @Transactional
@@ -140,7 +151,7 @@ public class ClubService {
     }
 
     @Transactional
-    public ClubDetailResponse updateClub(Integer clubId, Integer userId, ClubUpdateRequest request) {
+    public void updateProfile(Integer clubId, Integer userId, ClubProfileUpdateRequest request) {
         userRepository.getById(userId);
         Club club = clubRepository.getById(clubId);
 
@@ -148,16 +159,52 @@ public class ClubService {
             throw CustomException.of(FORBIDDEN_CLUB_MANAGER_ACCESS);
         }
 
-        club.update(
-            request.name(),
-            request.description(),
-            request.imageUrl(),
-            request.location(),
-            request.clubCategory(),
-            request.introduce()
-        );
+        club.updateProfile(request.introduce(), request.imageUrl());
 
-        return getClubDetail(clubId, userId);
+        clubTagMapRepository.deleteByClubId(clubId);
+
+        List<ClubTag> tags = clubTagRepository.findAllByIdIn(request.tagIds());
+        if (tags.size() != request.tagIds().size()) {
+            throw CustomException.of(NOT_FOUND_CLUB_TAG);
+        }
+
+        tags.forEach(tag -> {
+            ClubTagMap tagMap = ClubTagMap.builder()
+                .club(club)
+                .tag(tag)
+                .build();
+            clubTagMapRepository.save(tagMap);
+        });
+    }
+
+    @Transactional
+    public void updateDetails(Integer clubId, Integer userId, ClubDetailUpdateRequest request) {
+        userRepository.getById(userId);
+        Club club = clubRepository.getById(clubId);
+
+        if (!hasClubManageAccess(clubId, userId, MANAGER_ALLOWED_GROUPS)) {
+            throw CustomException.of(FORBIDDEN_CLUB_MANAGER_ACCESS);
+        }
+
+        club.updateDetails(request.location(), request.introduce());
+    }
+
+    @Transactional
+    public void updateBasicInfo(Integer clubId, Integer userId, ClubBasicInfoUpdateRequest request) {
+        userRepository.getById(userId);
+        Club club = clubRepository.getById(clubId);
+
+        // TODO: 어드민 권한 체크 로직 추가 필요 (현재는 미구현)
+        // if (!isAdmin(userId)) {
+        //     throw CustomException.of(FORBIDDEN_CLUB_MANAGER_ACCESS);
+        // }
+
+        club.updateBasicInfo(request.name(), request.clubCategory());
+    }
+
+    public ClubTagsResponse getTags() {
+        List<ClubTag> tags = clubTagRepository.findAll();
+        return ClubTagsResponse.from(tags);
     }
 
     public ClubMembershipsResponse getJoinedClubs(Integer userId) {
@@ -376,6 +423,7 @@ public class ClubService {
                 questionRequest.isRequired())
             );
         }
+
         return questionsToCreate;
     }
 
