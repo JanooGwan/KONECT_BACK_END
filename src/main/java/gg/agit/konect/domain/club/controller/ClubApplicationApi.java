@@ -1,7 +1,9 @@
 package gg.agit.konect.domain.club.controller;
 
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import gg.agit.konect.domain.club.dto.ClubApplicationAnswersResponse;
+import gg.agit.konect.domain.club.dto.ClubApplicationCondition;
 import gg.agit.konect.domain.club.dto.ClubApplicationsResponse;
 import gg.agit.konect.domain.club.dto.ClubApplyQuestionsReplaceRequest;
 import gg.agit.konect.domain.club.dto.ClubApplyQuestionsResponse;
@@ -44,6 +47,9 @@ public interface ClubApplicationApi {
          - 동아리 관리자만 해당 동아리의 지원 내역을 조회할 수 있습니다.
          - 현재 지정된 모집 일정 범위에 지원한 내역만 볼 수 있습니다.
          - 상시 모집의 경우 모든 내역을 봅니다.
+         - 정렬 기준: APPLIED_AT(신청 일시), STUDENT_NUMBER(학번), NAME(이름)
+         - 정렬 방향: ASC(오름차순), DESC(내림차순)
+         - 기본 정렬: 신청 일시 최신순 (APPLIED_AT DESC)
 
         ## 에러
         - FORBIDDEN_CLUB_MANAGER_ACCESS (403): 동아리 매니저 권한이 없습니다.
@@ -53,6 +59,7 @@ public interface ClubApplicationApi {
     @GetMapping("/{clubId}/applications")
     ResponseEntity<ClubApplicationsResponse> getClubApplications(
         @PathVariable(name = "clubId") Integer clubId,
+        @Valid @ParameterObject @ModelAttribute ClubApplicationCondition condition,
         @UserId Integer userId
     );
 

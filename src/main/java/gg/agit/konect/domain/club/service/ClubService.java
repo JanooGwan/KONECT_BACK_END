@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import gg.agit.konect.domain.bank.repository.BankRepository;
 import gg.agit.konect.domain.club.dto.ClubApplicationAnswersResponse;
+import gg.agit.konect.domain.club.dto.ClubApplicationCondition;
 import gg.agit.konect.domain.club.dto.ClubApplicationsResponse;
 import gg.agit.konect.domain.club.dto.ClubAppliedClubsResponse;
 import gg.agit.konect.domain.club.dto.ClubApplyQuestionsReplaceRequest;
@@ -55,6 +56,7 @@ import gg.agit.konect.domain.club.model.ClubRecruitment;
 import gg.agit.konect.domain.club.model.ClubRecruitmentImage;
 import gg.agit.konect.domain.club.model.ClubSummaryInfo;
 import gg.agit.konect.domain.club.repository.ClubApplyAnswerRepository;
+import gg.agit.konect.domain.club.repository.ClubApplyQueryRepository;
 import gg.agit.konect.domain.club.repository.ClubApplyQuestionRepository;
 import gg.agit.konect.domain.club.repository.ClubApplyRepository;
 import gg.agit.konect.domain.club.repository.ClubMemberRepository;
@@ -82,6 +84,7 @@ public class ClubService {
         EnumSet.of(PRESIDENT, VICE_PRESIDENT);
 
     private final ClubQueryRepository clubQueryRepository;
+    private final ClubApplyQueryRepository clubApplyQueryRepository;
     private final ClubRepository clubRepository;
     private final ClubMemberRepository clubMemberRepository;
     private final ClubPositionRepository clubPositionRepository;
@@ -235,7 +238,11 @@ public class ClubService {
         return ClubAppliedClubsResponse.from(clubApplies);
     }
 
-    public ClubApplicationsResponse getClubApplications(Integer clubId, Integer userId) {
+    public ClubApplicationsResponse getClubApplications(
+        Integer clubId,
+        Integer userId,
+        ClubApplicationCondition condition
+    ) {
         clubRepository.getById(clubId);
 
         if (!hasClubManageAccess(clubId, userId, MANAGER_ALLOWED_GROUPS)) {
@@ -243,9 +250,9 @@ public class ClubService {
         }
 
         ClubRecruitment recruitment = clubRecruitmentRepository.getByClubId(clubId);
-        List<ClubApply> clubApplies = findApplicationsByRecruitmentPeriod(clubId, recruitment);
+        Page<ClubApply> clubAppliesPage = findApplicationsByRecruitmentPeriod(clubId, recruitment, condition);
 
-        return ClubApplicationsResponse.from(clubApplies);
+        return ClubApplicationsResponse.from(clubAppliesPage);
     }
 
     public ClubApplicationAnswersResponse getClubApplicationAnswers(
@@ -307,21 +314,23 @@ public class ClubService {
         clubApplyRepository.delete(clubApply);
     }
 
-    private List<ClubApply> findApplicationsByRecruitmentPeriod(
+    private Page<ClubApply> findApplicationsByRecruitmentPeriod(
         Integer clubId,
-        ClubRecruitment recruitment
+        ClubRecruitment recruitment,
+        ClubApplicationCondition condition
     ) {
         if (recruitment.getIsAlwaysRecruiting()) {
-            return clubApplyRepository.findAllByClubIdWithUser(clubId);
+            return clubApplyQueryRepository.findAllByClubId(clubId, condition);
         }
 
         LocalDateTime startDateTime = recruitment.getStartDate().atStartOfDay();
         LocalDateTime endDateTime = recruitment.getEndDate().atTime(LocalTime.MAX);
 
-        return clubApplyRepository.findAllByClubIdAndCreatedAtBetweenWithUser(
+        return clubApplyQueryRepository.findAllByClubIdAndCreatedAtBetween(
             clubId,
             startDateTime,
-            endDateTime
+            endDateTime,
+            condition
         );
     }
 
