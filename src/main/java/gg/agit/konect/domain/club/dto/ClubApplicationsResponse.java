@@ -23,6 +23,9 @@ public record ClubApplicationsResponse(
         @Schema(description = "지원자 이름", example = "이동훈", requiredMode = REQUIRED)
         String name,
 
+        @Schema(description = "지원자 프로필 이미지 링크", example = "https://stage-static.koreatech.in/konect/User_02.png", requiredMode = REQUIRED)
+        String imageUrl,
+
         @Schema(description = "지원 일시", example = "2025-01-13T10:30:00", requiredMode = REQUIRED)
         LocalDateTime appliedAt
     ) {
@@ -32,6 +35,7 @@ public record ClubApplicationsResponse(
                 clubApply.getId(),
                 clubApply.getUser().getStudentNumber(),
                 clubApply.getUser().getName(),
+                clubApply.getUser().getImageUrl(),
                 clubApply.getCreatedAt()
             );
         }
