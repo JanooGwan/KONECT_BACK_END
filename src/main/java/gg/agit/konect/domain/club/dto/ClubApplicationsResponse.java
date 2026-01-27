@@ -5,10 +5,24 @@ import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+
 import gg.agit.konect.domain.club.model.ClubApply;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 public record ClubApplicationsResponse(
+    @Schema(description = "조건에 해당하는 지원 내역 총 개수", example = "10", requiredMode = REQUIRED)
+    Long totalCount,
+
+    @Schema(description = "현재 페이지에서 조회된 지원 내역 개수", example = "5", requiredMode = REQUIRED)
+    Integer currentCount,
+
+    @Schema(description = "최대 페이지", example = "2", requiredMode = REQUIRED)
+    Integer totalPage,
+
+    @Schema(description = "현재 페이지", example = "1", requiredMode = REQUIRED)
+    Integer currentPage,
+
     @Schema(description = "동아리 지원 내역 리스트", requiredMode = REQUIRED)
     List<ClubApplicationResponse> applications
 ) {
@@ -41,9 +55,13 @@ public record ClubApplicationsResponse(
         }
     }
 
-    public static ClubApplicationsResponse from(List<ClubApply> clubApplies) {
+    public static ClubApplicationsResponse from(Page<ClubApply> page) {
         return new ClubApplicationsResponse(
-            clubApplies.stream()
+            page.getTotalElements(),
+            page.getNumberOfElements(),
+            page.getTotalPages(),
+            page.getNumber() + 1,
+            page.getContent().stream()
                 .map(ClubApplicationResponse::from)
                 .toList()
         );

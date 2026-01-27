@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import gg.agit.konect.domain.club.dto.ClubApplicationAnswersResponse;
+import gg.agit.konect.domain.club.dto.ClubApplicationCondition;
 import gg.agit.konect.domain.club.dto.ClubAppliedClubsResponse;
 import gg.agit.konect.domain.club.dto.ClubApplicationsResponse;
 import gg.agit.konect.domain.club.dto.ClubApplyQuestionsReplaceRequest;
@@ -146,9 +147,10 @@ public class ClubController implements
     @Override
     public ResponseEntity<ClubApplicationsResponse> getClubApplications(
         @PathVariable(name = "clubId") Integer clubId,
+        @Valid @ParameterObject @ModelAttribute ClubApplicationCondition condition,
         @UserId Integer userId
     ) {
-        ClubApplicationsResponse response = clubService.getClubApplications(clubId, userId);
+        ClubApplicationsResponse response = clubService.getClubApplications(clubId, userId, condition);
         return ResponseEntity.ok(response);
     }
 
