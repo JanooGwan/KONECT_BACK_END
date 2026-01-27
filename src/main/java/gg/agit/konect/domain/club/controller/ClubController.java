@@ -47,7 +47,12 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/clubs")
-public class ClubController implements ClubApi {
+public class ClubController implements
+    ClubBasicApi,
+    ClubRecruitmentApi,
+    ClubApplicationApi,
+    ClubPositionApi,
+    ClubMemberApi {
 
     private final ClubService clubService;
     private final ClubPositionService clubPositionService;
