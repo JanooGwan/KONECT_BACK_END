@@ -17,7 +17,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
-@Tag(name = "Club Position: 직책 관리", description = "동아리 직책 생성, 수정, 삭제 API")
+@Tag(name = "(Normal) Club - Position: 직책 관리", description = "동아리 직책 생성, 수정, 삭제 API")
 @RequestMapping("/clubs")
 public interface ClubPositionApi {
 

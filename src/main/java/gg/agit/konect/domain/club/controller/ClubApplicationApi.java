@@ -20,7 +20,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
-@Tag(name = "Club Application: 지원 및 신청 관리", description = "동아리 지원, 지원서 관리, 회비 정보 API")
+@Tag(name = "(Normal) Club - Application: 지원 및 신청", description = "동아리 지원, 지원서 관리, 회비 정보 API")
 @RequestMapping("/clubs")
 public interface ClubApplicationApi {
 
