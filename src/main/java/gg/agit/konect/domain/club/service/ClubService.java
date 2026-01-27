@@ -1,7 +1,6 @@
 package gg.agit.konect.domain.club.service;
 
-import static gg.agit.konect.domain.club.enums.ClubPositionGroup.MANAGER;
-import static gg.agit.konect.domain.club.enums.ClubPositionGroup.PRESIDENT;
+import static gg.agit.konect.domain.club.enums.ClubPositionGroup.*;
 import static gg.agit.konect.global.code.ApiResponseCode.*;
 
 import java.time.LocalDateTime;
@@ -82,6 +81,8 @@ public class ClubService {
         EnumSet.of(PRESIDENT);
     private static final Set<ClubPositionGroup> MANAGER_ALLOWED_GROUPS =
         EnumSet.of(PRESIDENT, MANAGER);
+    private static final Set<ClubPositionGroup> LEADER_ALLOWED_GROUPS =
+        EnumSet.of(PRESIDENT, VICE_PRESIDENT);
 
     private final ClubQueryRepository clubQueryRepository;
     private final ClubRepository clubRepository;
@@ -276,6 +277,34 @@ public class ClubService {
         List<ClubApplyAnswer> answers = clubApplyAnswerRepository.findAllByApplyIdWithQuestion(applicationId);
 
         return ClubApplicationAnswersResponse.of(clubApply, questions, answers);
+    }
+
+    @Transactional
+    public void approveClubApplication(Integer clubId, Integer applicationId, Integer userId) {
+        Club club = clubRepository.getById(clubId);
+
+        if (!hasClubManageAccess(clubId, userId, LEADER_ALLOWED_GROUPS)) {
+            throw CustomException.of(FORBIDDEN_CLUB_MANAGER_ACCESS);
+        }
+
+        ClubApply clubApply = clubApplyRepository.getByIdAndClubId(applicationId, clubId);
+        User applicant = clubApply.getUser();
+
+        if (clubMemberRepository.existsByClubIdAndUserId(clubId, applicant.getId())) {
+            throw CustomException.of(ALREADY_CLUB_MEMBER);
+        }
+
+        ClubPosition memberPosition = clubPositionRepository.getFirstByClubIdAndClubPositionGroup(clubId, MEMBER);
+
+        ClubMember newMember = ClubMember.builder()
+            .club(club)
+            .user(applicant)
+            .clubPosition(memberPosition)
+            .isFeePaid(true)
+            .build();
+
+        clubMemberRepository.save(newMember);
+        clubApplyRepository.delete(clubApply);
     }
 
     private List<ClubApply> findApplicationsByRecruitmentPeriod(
