@@ -25,6 +25,7 @@ import gg.agit.konect.domain.club.dto.ClubMemberAddRequest;
 import gg.agit.konect.domain.club.dto.ClubMemberCondition;
 import gg.agit.konect.domain.club.dto.ClubMembersResponse;
 import gg.agit.konect.domain.club.dto.ClubMembershipsResponse;
+import gg.agit.konect.domain.club.dto.MyManagedClubResponse;
 import gg.agit.konect.domain.club.dto.ClubPositionCreateRequest;
 import gg.agit.konect.domain.club.dto.ClubPositionUpdateRequest;
 import gg.agit.konect.domain.club.dto.ClubPositionsResponse;
@@ -136,6 +137,15 @@ public class ClubController implements
     }
 
     @Override
+    public ResponseEntity<MyManagedClubResponse> getManagedClubDetail(
+        @PathVariable(name = "clubId") Integer clubId,
+        @UserId Integer userId
+    ) {
+        MyManagedClubResponse response = clubService.getManagedClubDetail(clubId, userId);
+        return ResponseEntity.ok(response);
+    }
+
+    @Override
     public ResponseEntity<ClubAppliedClubsResponse> getAppliedClubs(
         @UserId Integer userId
     ) {
@@ -165,6 +175,26 @@ public class ClubController implements
         );
 
         return ResponseEntity.ok(response);
+    }
+
+    @Override
+    public ResponseEntity<Void> approveClubApplication(
+        @PathVariable(name = "clubId") Integer clubId,
+        @PathVariable(name = "applicationId") Integer applicationId,
+        @UserId Integer userId
+    ) {
+        clubService.approveClubApplication(clubId, applicationId, userId);
+        return ResponseEntity.ok().build();
+    }
+
+    @Override
+    public ResponseEntity<Void> rejectClubApplication(
+        @PathVariable(name = "clubId") Integer clubId,
+        @PathVariable(name = "applicationId") Integer applicationId,
+        @UserId Integer userId
+    ) {
+        clubService.rejectClubApplication(clubId, applicationId, userId);
+        return ResponseEntity.ok().build();
     }
 
     @Override

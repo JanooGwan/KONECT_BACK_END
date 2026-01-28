@@ -71,6 +71,39 @@ public interface ClubApplicationApi {
         @UserId Integer userId
     );
 
+    @Operation(summary = "동아리 가입 신청을 승인한다.", tags = TAG, description = """
+        동아리 회장 또는 부회장만 가입 신청을 승인할 수 있습니다.
+        승인 시 지원자는 일반회원으로 등록되며, 지원 내역은 삭제됩니다.
+
+        ## 에러
+        - ALREADY_CLUB_MEMBER (409): 이미 동아리 회원입니다.
+        - FORBIDDEN_CLUB_MANAGER_ACCESS (403): 동아리 매니저 권한이 없습니다.
+        - NOT_FOUND_CLUB (404): 동아리를 찾을 수 없습니다.
+        - NOT_FOUND_CLUB_APPLY (404): 동아리 지원 내역을 찾을 수 없습니다.
+        """)
+    @PostMapping("/{clubId}/applications/{applicationId}/approve")
+    ResponseEntity<Void> approveClubApplication(
+        @PathVariable(name = "clubId") Integer clubId,
+        @PathVariable(name = "applicationId") Integer applicationId,
+        @UserId Integer userId
+    );
+
+    @Operation(summary = "동아리 가입 신청을 거절한다.", tags = TAG, description = """
+        동아리 회장 또는 부회장만 가입 신청을 거절할 수 있습니다.
+        거절 시 지원 내역은 삭제됩니다.
+
+        ## 에러
+        - FORBIDDEN_CLUB_MANAGER_ACCESS (403): 동아리 매니저 권한이 없습니다.
+        - NOT_FOUND_CLUB (404): 동아리를 찾을 수 없습니다.
+        - NOT_FOUND_CLUB_APPLY (404): 동아리 지원 내역을 찾을 수 없습니다.
+        """)
+    @PostMapping("/{clubId}/applications/{applicationId}/reject")
+    ResponseEntity<Void> rejectClubApplication(
+        @PathVariable(name = "clubId") Integer clubId,
+        @PathVariable(name = "applicationId") Integer applicationId,
+        @UserId Integer userId
+    );
+
     @Operation(summary = "동아리 가입 문항을 조회한다.", tags = TAG)
     @GetMapping("/{clubId}/questions")
     ResponseEntity<ClubApplyQuestionsResponse> getApplyQuestions(

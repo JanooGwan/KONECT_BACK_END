@@ -20,6 +20,7 @@ import gg.agit.konect.domain.club.dto.ClubMemberCondition;
 import gg.agit.konect.domain.club.dto.ClubMembersResponse;
 import gg.agit.konect.domain.club.dto.ClubMembershipsResponse;
 import gg.agit.konect.domain.club.dto.ClubProfileUpdateRequest;
+import gg.agit.konect.domain.club.dto.MyManagedClubResponse;
 import gg.agit.konect.domain.club.dto.ClubTagsResponse;
 import gg.agit.konect.domain.club.dto.ClubsResponse;
 import gg.agit.konect.global.auth.annotation.UserId;
@@ -128,6 +129,19 @@ public interface ClubBasicApi {
     @Operation(summary = "관리자 권한을 가지고 있는 동아리 리스트를 조회한다.", tags = TAG)
     @GetMapping("/managed")
     ResponseEntity<ClubMembershipsResponse> getManagedClubs(
+        @UserId Integer userId
+    );
+
+    @Operation(summary = "관리 중인 동아리의 상세 정보를 조회한다.", tags = TAG, description = """
+        동아리 관리자(회장, 부회장, 운영진)만 조회할 수 있습니다.
+
+        ## 에러
+        - FORBIDDEN_CLUB_MANAGER_ACCESS (403): 동아리 매니저 권한이 없습니다.
+        - NOT_FOUND_CLUB (404): 동아리를 찾을 수 없습니다.
+        """)
+    @GetMapping("/managed/{clubId}")
+    ResponseEntity<MyManagedClubResponse> getManagedClubDetail(
+        @PathVariable(name = "clubId") Integer clubId,
         @UserId Integer userId
     );
 
