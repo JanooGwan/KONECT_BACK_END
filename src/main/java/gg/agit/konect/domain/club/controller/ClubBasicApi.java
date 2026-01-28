@@ -20,9 +20,8 @@ import gg.agit.konect.domain.club.dto.ClubMemberCondition;
 import gg.agit.konect.domain.club.dto.ClubMembersResponse;
 import gg.agit.konect.domain.club.dto.ClubMembershipsResponse;
 import gg.agit.konect.domain.club.dto.ClubProfileUpdateRequest;
-import gg.agit.konect.domain.club.dto.MyManagedClubResponse;
-import gg.agit.konect.domain.club.dto.ClubTagsResponse;
 import gg.agit.konect.domain.club.dto.ClubsResponse;
+import gg.agit.konect.domain.club.dto.MyManagedClubResponse;
 import gg.agit.konect.global.auth.annotation.UserId;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -115,10 +114,6 @@ public interface ClubBasicApi {
         @Valid @RequestBody ClubBasicInfoUpdateRequest request,
         @UserId Integer userId
     );
-
-    @Operation(summary = "사용 가능한 전체 태그 목록을 조회한다.", tags = TAG)
-    @GetMapping("/tags")
-    ResponseEntity<ClubTagsResponse> getTags();
 
     @Operation(summary = "가입한 동아리 리스트를 조회한다.", tags = TAG)
     @GetMapping("/joined")

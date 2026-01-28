@@ -33,7 +33,6 @@ import gg.agit.konect.domain.club.dto.ClubProfileUpdateRequest;
 import gg.agit.konect.domain.club.dto.ClubRecruitmentCreateRequest;
 import gg.agit.konect.domain.club.dto.ClubRecruitmentResponse;
 import gg.agit.konect.domain.club.dto.ClubRecruitmentUpdateRequest;
-import gg.agit.konect.domain.club.dto.ClubTagsResponse;
 import gg.agit.konect.domain.club.dto.ClubsResponse;
 import gg.agit.konect.domain.club.dto.MemberPositionChangeRequest;
 import gg.agit.konect.domain.club.dto.PresidentTransferRequest;
@@ -114,12 +113,6 @@ public class ClubController implements
     ) {
         clubService.updateBasicInfo(clubId, userId, request);
         return ResponseEntity.noContent().build();
-    }
-
-    @Override
-    public ResponseEntity<ClubTagsResponse> getTags() {
-        ClubTagsResponse response = clubService.getTags();
-        return ResponseEntity.ok(response);
     }
 
     @Override
