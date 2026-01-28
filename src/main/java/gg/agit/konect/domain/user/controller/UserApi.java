@@ -4,13 +4,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import gg.agit.konect.domain.user.dto.SignupRequest;
 import gg.agit.konect.domain.user.dto.UserInfoResponse;
-import gg.agit.konect.domain.user.dto.UserUpdateRequest;
 import gg.agit.konect.global.auth.annotation.PublicApi;
 import gg.agit.konect.global.auth.annotation.UserId;
 import io.swagger.v3.oas.annotations.Operation;
@@ -46,13 +44,6 @@ public interface UserApi {
     @Operation(summary = "로그인한 사용자의 정보를 조회한다.")
     @GetMapping("/me")
     ResponseEntity<UserInfoResponse> getMyInfo(@UserId Integer userId);
-
-    @Operation(summary = "로그인한 사용자의 정보를 수정한다.")
-    @PutMapping("/me")
-    ResponseEntity<Void> updateMyInfo(
-        HttpSession session,
-        @RequestBody @Valid UserUpdateRequest request
-    );
 
     @Operation(summary = "로그아웃한다.")
     @PostMapping("/logout")
