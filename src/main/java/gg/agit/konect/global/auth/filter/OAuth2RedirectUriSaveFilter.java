@@ -27,7 +27,7 @@ public class OAuth2RedirectUriSaveFilter extends OncePerRequestFilter {
         if (request.getRequestURI().startsWith("/oauth2/authorization/")) {
             String redirectUri = request.getParameter("redirect_uri");
 
-            if (isValidOriginOnlyRedirect(redirectUri)) {
+            if (isValidRedirectUri(redirectUri)) {
                 HttpSession session = request.getSession(true);
                 session.setAttribute(REDIRECT_URI_SESSION_KEY, redirectUri);
             }
@@ -36,7 +36,7 @@ public class OAuth2RedirectUriSaveFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private boolean isValidOriginOnlyRedirect(String redirectUri) {
+    private boolean isValidRedirectUri(String redirectUri) {
         if (redirectUri == null || redirectUri.isBlank()) {
             return false;
         }
@@ -48,9 +48,7 @@ public class OAuth2RedirectUriSaveFilter extends OncePerRequestFilter {
                 return false;
             }
 
-            return (uri.getPath() == null || uri.getPath().isEmpty())
-                && uri.getQuery() == null
-                && uri.getFragment() == null;
+            return true;
         } catch (Exception e) {
             return false;
         }
