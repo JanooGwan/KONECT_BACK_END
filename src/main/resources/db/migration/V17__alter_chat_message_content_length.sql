@@ -1,1 +1,0 @@
-ALTER TABLE chat_message MODIFY COLUMN content VARCHAR(1000) NOT NULL;
