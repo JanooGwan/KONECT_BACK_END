@@ -1,12 +1,15 @@
 package gg.agit.konect.domain.club.controller;
 
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import gg.agit.konect.domain.club.dto.ClubApplicationAnswersResponse;
+import gg.agit.konect.domain.club.dto.ClubApplicationCondition;
 import gg.agit.konect.domain.club.dto.ClubApplicationsResponse;
 import gg.agit.konect.domain.club.dto.ClubApplyQuestionsReplaceRequest;
 import gg.agit.konect.domain.club.dto.ClubApplyQuestionsResponse;
@@ -38,9 +41,10 @@ public class ClubApplicationController implements ClubApplicationApi {
     @Override
     public ResponseEntity<ClubApplicationsResponse> getClubApplications(
         @PathVariable(name = "clubId") Integer clubId,
+        @Valid @ParameterObject @ModelAttribute ClubApplicationCondition condition,
         @UserId Integer userId
     ) {
-        ClubApplicationsResponse response = clubService.getClubApplications(clubId, userId);
+        ClubApplicationsResponse response = clubService.getClubApplications(clubId, userId, condition);
         return ResponseEntity.ok(response);
     }
 
